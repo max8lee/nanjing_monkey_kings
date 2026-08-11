@@ -41,3 +41,12 @@ lerna-debug.log*
 
 # Film footage (large video files)
 assets/film/*.mp4
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+database-debug.log
+ui-debug.log
+.firestore-emulator/
+.agents/
