@@ -9,7 +9,7 @@
  *   customBios/     — custom bio overrides per player id
  */
 
-import { doc, getDoc, setDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from './firebase';
 
 // ─── Users ────────────────────────────────────────────────────────────────────
@@ -25,6 +25,16 @@ export async function saveUser(uid, data) {
 
 export async function updateUser(uid, partial) {
     await updateDoc(doc(db, 'users', uid), partial);
+}
+
+export async function getTopUsersByTokens(limitCount = 4) {
+    const q = query(collection(db, 'users'), orderBy('tokens', 'desc'), limit(limitCount));
+    const snap = await getDocs(q);
+    const result = [];
+    snap.forEach(d => {
+        result.push({ uid: d.id, ...d.data() });
+    });
+    return result;
 }
 
 // ─── Claimed Players ──────────────────────────────────────────────────────────

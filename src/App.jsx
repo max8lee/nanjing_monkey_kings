@@ -33,6 +33,7 @@ export default function App() {
     const [activeSeason, setActiveSeason] = useState('season2');
     const [playerSlugParam, setPlayerSlugParam] = useState(null);
     const [gameSlugParam, setGameSlugParam] = useState(null);
+    const [filmSlugParam, setFilmSlugParam] = useState(null);
 
     // USER & SHARED DATA
     const [currentUser, setCurrentUser] = useState(null);
@@ -99,15 +100,23 @@ export default function App() {
             setActiveTab('player-bio');
             setPlayerSlugParam(hash.replace('player-bio/', ''));
             setGameSlugParam(null);
+            setFilmSlugParam(null);
         } else if (hash.startsWith('game/')) {
             setActiveTab('game');
             setGameSlugParam(hash.replace('game/', ''));
             setPlayerSlugParam(null);
+            setFilmSlugParam(null);
+        } else if (hash.startsWith('film/')) {
+            setActiveTab('film');
+            setFilmSlugParam(hash.replace('film/', ''));
+            setPlayerSlugParam(null);
+            setGameSlugParam(null);
         } else {
             const known = ['home', 'schedule', 'roster', 'stats', 'standings', 'film', 'player-props'];
             setActiveTab(known.includes(hash) ? hash : 'home');
             setPlayerSlugParam(null);
             setGameSlugParam(null);
+            setFilmSlugParam(null);
         }
     };
 
@@ -122,6 +131,7 @@ export default function App() {
         setActiveTab(tabId);
         setPlayerSlugParam(null);
         setGameSlugParam(null);
+        setFilmSlugParam(null);
         if (updateHash && window.location.hash !== `#${tabId}`) {
             window.history.pushState({ tab: tabId }, '', `#${tabId}`);
         }
@@ -142,6 +152,15 @@ export default function App() {
         setGameSlugParam(slug);
         if (updateHash && window.location.hash !== `#game/${slug}`) {
             window.history.pushState({ tab: 'game', slug }, '', `#game/${slug}`);
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleOpenFilmPage = (slug, updateHash = true) => {
+        setActiveTab('film');
+        setFilmSlugParam(slug);
+        if (updateHash && window.location.hash !== `#film/${slug}`) {
+            window.history.pushState({ tab: 'film', slug }, '', `#film/${slug}`);
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -226,11 +245,13 @@ export default function App() {
             <main className="main-content-container">
                 {activeTab === 'home' && (
                     <HomePage
-                        activeSeason={activeSeason}
+                        activeSeason={'season2'}
                         onNavigate={navigateToTab}
                         onOpenPlayerBio={handleOpenPlayerBio}
                         onOpenGamePage={handleOpenGamePage}
+                        onOpenFilmPage={handleOpenFilmPage}
                         onOpenTicketModal={() => setIsTicketOpen(true)}
+                        currentUser={currentUser}
                     />
                 )}
                 {activeTab === 'schedule' && (
@@ -251,6 +272,8 @@ export default function App() {
                 )}
                 {activeTab === 'film' && (
                     <FilmPage
+                        filmSlug={filmSlugParam}
+                        onOpenFilmPage={handleOpenFilmPage}
                         onPlayVideo={(title, video) => setVideoModalData({ isOpen: true, title, src: video })}
                     />
                 )}

@@ -9,15 +9,38 @@ import {
     DATA_ROSTER_SEASON2,
     getPlayerSlug
 } from '../data/teamData';
+import { getTopUsersByTokens } from '../firebaseDb';
 
-export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, onOpenGamePage, onOpenTicketModal }) {
+export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, onOpenGamePage, onOpenFilmPage, onOpenTicketModal, currentUser }) {
     const [timeLeft, setTimeLeft] = useState({ d: '03', h: '14', m: '22', s: '45' });
+    const [leaderboard, setLeaderboard] = useState([]);
 
     useEffect(() => {
-        let totalSeconds = (3 * 24 * 3600) + (14 * 3600) + (22 * 60) + 45;
-        const interval = setInterval(() => {
-            if (totalSeconds <= 0) return;
-            totalSeconds--;
+        getTopUsersByTokens(4).then(setLeaderboard).catch(console.error);
+    }, []);
+
+    const nextGame = useMemo(() => {
+        const schedule = activeSeason === 'season1' ? DATA_SCHEDULE_SEASON1 : DATA_SCHEDULE_SEASON2;
+        // The schedule is sorted from latest to earliest, so we want the last item that is 'UPCOMING'
+        const upcomingGames = schedule.filter(g => g.status === 'UPCOMING');
+        return upcomingGames.length > 0 ? upcomingGames[upcomingGames.length - 1] : null;
+    }, [activeSeason]);
+
+    useEffect(() => {
+        if (!nextGame) return;
+
+        const [datePart, timePart] = nextGame.date.split(' • ');
+        // Assume 2026 and Pacific Daylight Time (GMT-0700) for summer games
+        const targetDate = new Date(`${datePart}, 2026 ${timePart}:00 GMT-0700`);
+
+        const updateTimer = () => {
+            const now = new Date();
+            const totalSeconds = Math.floor((targetDate - now) / 1000);
+
+            if (totalSeconds <= 0) {
+                setTimeLeft({ d: '00', h: '00', m: '00', s: '00' });
+                return;
+            }
 
             const d = Math.floor(totalSeconds / (3600 * 24));
             const h = Math.floor((totalSeconds % (3600 * 24)) / 3600);
@@ -30,21 +53,16 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
                 m: String(m).padStart(2, '0'),
                 s: String(s).padStart(2, '0')
             });
-        }, 1000);
+        };
 
+        updateTimer();
+        const interval = setInterval(updateTimer, 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, [nextGame]);
 
     const handlePollVote = (opt) => {
         alert(`🔥 Thanks for voting! Your pick for ${opt.toUpperCase()} has been registered in the Nanjing fan poll.`);
     };
-
-    const nextGame = useMemo(() => {
-        const schedule = activeSeason === 'season1' ? DATA_SCHEDULE_SEASON1 : DATA_SCHEDULE_SEASON2;
-        // The schedule is sorted from latest to earliest, so we want the last item that is 'UPCOMING'
-        const upcomingGames = schedule.filter(g => g.status === 'UPCOMING');
-        return upcomingGames.length > 0 ? upcomingGames[upcomingGames.length - 1] : null;
-    }, [activeSeason]);
 
     const statLeaders = useMemo(() => {
         const stats = activeSeason === 'season1' ? DATA_STATS_SEASON1 : DATA_STATS_SEASON2;
@@ -121,7 +139,7 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
             <div className="home-grid-layout">
                 {/* COL 1: LATEST TEAM HEADLINES */}
                 <div className="news-feed-column">
-                    <h3 className="section-title">📰 TEAM HEADLINES & RECAPS</h3>
+                    <h3 className="section-title">TEAM HEADLINES & RECAPS</h3>
                     <div className="news-card" onClick={() => onOpenGamePage('game-3')}>
                         <div className="news-tag">GAME RECAP</div>
                         <h4>Monkey Kings Capture First Victory in 41-38 Thriller vs Blue</h4>
@@ -136,7 +154,7 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
                         <span className="news-date">AUG 05, 2026 • Team Spotlight</span>
                     </div>
 
-                    <div className="news-card" onClick={() => onNavigate('film')}>
+                    <div className="news-card" onClick={() => onOpenFilmPage ? onOpenFilmPage('season-2-game-3') : onNavigate('film')}>
                         <div className="news-tag">GAME FILM</div>
                         <h4>Watch Full Game Highlights from Victory over Team Blue</h4>
                         <p>Re-live every big defensive block and clutch 3-pointer from Nanjing's baseline camera breakdown.</p>
@@ -146,7 +164,7 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
 
                 {/* COL 2: TEAM STAT LEADERS */}
                 <div className="leaders-column">
-                    <h3 className="section-title">⭐ SEASON STAT LEADERS</h3>
+                    <h3 className="section-title">SEASON STAT LEADERS</h3>
                     
                     {statLeaders && statLeaders.pts && (
                         <div className="leader-box" onClick={() => onOpenPlayerBio(statLeaders.pts.slug)}>
@@ -200,7 +218,7 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
                 {/* COL 3: FAN POLL & LEADERBOARD */}
                 <div className="sidebar-column">
                     <div className="poll-card-box">
-                        <h3>🔥 FAN POLL OF THE WEEK</h3>
+                        <h3>FAN POLL OF THE WEEK</h3>
                         <p className="poll-question">Who will be the top scorer in the upcoming matchup vs Gold Lions?</p>
                         <div className="poll-options">
                             <button className="poll-opt-btn" onClick={() => handlePollVote('Arjun Virmani')}>Arjun Virmani (#10)</button>
@@ -211,24 +229,24 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
                     </div>
 
                     <div className="leaderboard-card-box">
-                        <h3>🏆 FAN PROPS LEADERBOARD</h3>
+                        <h3>FAN PROPS LEADERBOARD</h3>
                         <div className="lb-rows">
-                            <div className="lb-row gold">
-                                <span>1. Alex Rivera</span>
-                                <strong>3,450 PTS</strong>
-                            </div>
-                            <div className="lb-row">
-                                <span>2. Jordan Chen</span>
-                                <strong>2,900 PTS</strong>
-                            </div>
-                            <div className="lb-row">
-                                <span>3. Taylor Swift</span>
-                                <strong>2,450 PTS</strong>
-                            </div>
-                            <div className="lb-row highlight">
-                                <span>4. You (Guest Fan)</span>
-                                <strong>1,250 PTS</strong>
-                            </div>
+                            {leaderboard.length > 0 ? leaderboard.map((user, idx) => {
+                                const isMe = currentUser && currentUser.uid === user.uid;
+                                const isGold = idx === 0;
+                                return (
+                                    <div 
+                                        key={user.uid} 
+                                        className={`lb-row ${isGold ? 'gold' : ''} ${isMe ? 'highlight' : ''}`}
+                                        style={{ display: 'flex', justifyContent: 'space-between' }}
+                                    >
+                                        <span>{idx + 1}. {user.name || 'Anonymous'}{isMe ? ' (You)' : ''}</span>
+                                        <strong>{(user.tokens || 0).toLocaleString()} PTS</strong>
+                                    </div>
+                                );
+                            }) : (
+                                <div style={{ textAlign: 'center', padding: '1rem', color: '#94A3B8' }}>Loading leaderboard...</div>
+                            )}
                         </div>
                     </div>
                 </div>

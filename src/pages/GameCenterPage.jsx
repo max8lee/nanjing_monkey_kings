@@ -9,7 +9,10 @@ export default function GameCenterPage({ gameSlug, activeSeason, onBack, onOpenP
     
     // Extract Game Index or Game ID
     const cleanId = (gameSlug || '').toString().replace(/^(season1-|game-)/, '');
-    let g = scheduleSource.find((item, idx) => (idx + 1).toString() === cleanId || item.opp.toLowerCase().includes(cleanId.toLowerCase()));
+    let g = scheduleSource.find(item => item.gameSlug === gameSlug);
+    if (!g) {
+        g = scheduleSource.find((item, idx) => (idx + 1).toString() === cleanId || item.opp.toLowerCase().includes(cleanId.toLowerCase()));
+    }
     if (!g && scheduleSource.length > 0) g = scheduleSource[0];
     if (!g) return null;
 
@@ -101,7 +104,7 @@ export default function GameCenterPage({ gameSlug, activeSeason, onBack, onOpenP
                     </div>
                 </div>
 
-                {!isUpcoming && (
+                {!isUpcoming && !isSeason1 && (
                     <div className="linescore-wrapper">
                         <table className="espn-table linescore-table">
                             <thead>
@@ -131,7 +134,7 @@ export default function GameCenterPage({ gameSlug, activeSeason, onBack, onOpenP
                 )}
             </div>
 
-            {!isUpcoming && (
+            {!isUpcoming && !isSeason1 && (
                 <>
                     {/* TEAM COMPARISON & SHOOTING EFFICIENCY */}
                     <div className="bio-card-box">

@@ -71,12 +71,12 @@ export const DATA_ROSTER_SEASON1 = [
 ];
 
 export const DATA_SCHEDULE_SEASON1 = [
-    { date: 'JUN 29 • 19:30', opp: "Adam Silvers' Hairstylist", venue: 'Mission Dolores Court 1', status: 'W 40-19', perf: 'Season Finale Blowout Win!', isHome: true },
-    { date: 'JUN 22 • 18:30', opp: 'Love Generation', venue: 'Mission Dolores Court 1', status: 'L 30-62', perf: 'Team High (30 pts)', isHome: false },
-    { date: 'JUN 15 • 21:30', opp: "Drummond's Finger Roll", venue: 'Mission Dolores Court 1', status: 'L 36-50', perf: 'Team Effort (36 pts)', isHome: true },
-    { date: 'JUN 08 • 21:30', opp: "Ja's Shooters", venue: 'Mission Dolores Court 1', status: 'L 27-46', perf: 'Defensive Battle', isHome: false },
-    { date: 'JUN 01 • 20:30', opp: 'Clutch Time', venue: 'Mission Dolores Court 1', status: 'L 40-42', perf: 'Heartbreaker (40-42)', isHome: true },
-    { date: 'MAY 18 • 19:30', opp: 'buckets', venue: 'Mission Dolores Court 1', status: 'L 37-55', perf: 'Season 1 Opener (37 pts)', isHome: false }
+    { date: 'JUN 29 • 19:30', opp: "Adam Silvers' Hairstylists", venue: 'Mission Dolores Court 1', status: 'W 40-19', perf: 'Season Finale Blowout Win!', isHome: true, gameSlug: 'season1-game-6' },
+    { date: 'JUN 22 • 18:30', opp: 'Love Generation', venue: 'Mission Dolores Court 1', status: 'L 30-62', perf: 'Team High (30 pts)', isHome: false, gameSlug: 'season1-game-5' },
+    { date: 'JUN 15 • 21:30', opp: "Drummond's Finger Roll", venue: 'Mission Dolores Court 1', status: 'L 36-50', perf: 'Team Effort (36 pts)', isHome: true, gameSlug: 'season1-game-4' },
+    { date: 'JUN 08 • 21:30', opp: "Ja's Shooters", venue: 'Mission Dolores Court 1', status: 'L 27-46', perf: 'Defensive Battle', isHome: false, gameSlug: 'season1-game-3' },
+    { date: 'JUN 01 • 20:30', opp: 'Clutch Time', venue: 'Mission Dolores Court 1', status: 'L 40-42', perf: 'Heartbreaker (40-42)', isHome: true, gameSlug: 'season1-game-2' },
+    { date: 'MAY 18 • 19:30', opp: 'buckets', venue: 'Mission Dolores Court 1', status: 'L 37-55', perf: 'Season 1 Opener (37 pts)', isHome: false, gameSlug: 'season1-game-1' }
 ];
 
 export const DATA_STATS_SEASON1 = [

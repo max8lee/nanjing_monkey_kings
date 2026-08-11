@@ -50,9 +50,8 @@ export default function SchedulePage({ activeSeason, onOpenGamePage }) {
                     </thead>
                     <tbody>
                         {list.map((m) => {
-                            const gameIndex = sourceData.indexOf(m) + 1;
-                            const hasBoxScore = activeSeason === 'season2' && m.status !== 'UPCOMING';
-                            const gameSlug = `game-${gameIndex}`;
+                            const hasBoxScore = m.status !== 'UPCOMING';
+                            const gameSlug = m.gameSlug;
 
                             return (
                                 <tr

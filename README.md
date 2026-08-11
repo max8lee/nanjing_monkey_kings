@@ -22,6 +22,18 @@ Official Volo Sports League Web Application for the **Nanjing Monkey Kings** Bas
 
 ---
 
+## 👨‍💻 Contributing (For Teammates)
+
+Want to update the schedule, add new game films, or tweak the codebase? Follow these steps:
+
+1. **Clone the Code**: Clone the GitHub repository to your local machine.
+2. **Install Dependencies**: Run `npm install` in your terminal to install the necessary packages.
+3. **Test Locally**: Run `npm run dev` and open `http://localhost:3000` in your browser to verify your changes work perfectly before submitting.
+4. **Make a Pull Request (PR)**: Push your changes to a new branch on GitHub and open a Pull Request against the `main` branch.
+5. **Automatic Live Deployment**: Once your Pull Request is reviewed and **merged into `main`**, our Firebase CI/CD GitHub Action will automatically build and re-deploy your changes to the live website!
+
+---
+
 ## 🏆 Key Features
 
 - **⚛️ Modern React + Vite Architecture**: Pure state management with dynamic component resizing across desktop, tablet, and mobile viewports.
