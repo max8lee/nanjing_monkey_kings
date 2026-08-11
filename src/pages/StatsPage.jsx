@@ -7,7 +7,7 @@ export default function StatsPage({ activeSeason, onOpenPlayerBio }) {
     return (
         <div className="page-section active">
             <div className="section-header-bar">
-                <h2>{activeSeason === 'season1' ? 'SEASON 1 INDIVIDUAL STATISTICAL LEADERS' : 'SEASON 2 INDIVIDUAL STATISTICAL LEADERS'}</h2>
+                <h2>{activeSeason === 'season1' ? 'SEASON 1 STATS' : 'SEASON 2 STATS'}</h2>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Click any player row to open full player bio page</span>
             </div>
 

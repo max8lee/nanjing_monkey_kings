@@ -1,4 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from './firebase';
+import {
+    getUser,
+    saveUser,
+    updateUser,
+    getAllClaimedPlayers,
+    claimPlayer,
+    getAllCustomBios,
+    saveCustomBio,
+} from './firebaseDb';
+
 import Header from './components/Header';
 import Navbar from './components/Navbar';
 import AuthPortal from './components/AuthPortal';
@@ -22,35 +34,59 @@ export default function App() {
     const [playerSlugParam, setPlayerSlugParam] = useState(null);
     const [gameSlugParam, setGameSlugParam] = useState(null);
 
-    // PERSISTENT USER & CLAIMING REGISTRIES (CLEARED TO FRESH 100% UNCLAIMED DATABASE)
+    // USER & SHARED DATA
     const [currentUser, setCurrentUser] = useState(null);
     const [claimedPlayers, setClaimedPlayers] = useState({});
     const [customPlayerBios, setCustomPlayerBios] = useState({});
 
-    // Wipe browser storage once on mount to guarantee fresh clean database
-    useEffect(() => {
-        localStorage.removeItem('users_db');
-        localStorage.removeItem('monkey_kings_user');
-        localStorage.removeItem('claimed_players');
-        localStorage.removeItem('custom_player_bios');
-    }, []);
-
-    // MODAL STATES
+    // authReady: true once Firebase has resolved the initial auth state
+    // Prevents a flash of the auth modal for already-signed-in users
+    const [authReady, setAuthReady] = useState(false);
     const [isAuthOpen, setIsAuthOpen] = useState(false);
+
     const [isTicketOpen, setIsTicketOpen] = useState(false);
     const [videoModalData, setVideoModalData] = useState({ isOpen: false, title: '', src: '' });
     const [editPlayerTarget, setEditPlayerTarget] = useState(null);
 
-    // Save Claimed Players & Custom Bios to localStorage
+    // ── Firebase Auth listener + shared data load on mount ───────────────────
     useEffect(() => {
-        localStorage.setItem('claimed_players', JSON.stringify(claimedPlayers));
-    }, [claimedPlayers]);
+        // Load shared data visible to all users
+        getAllClaimedPlayers().then(setClaimedPlayers).catch(() => {});
+        getAllCustomBios().then(setCustomPlayerBios).catch(() => {});
 
-    useEffect(() => {
-        localStorage.setItem('custom_player_bios', JSON.stringify(customPlayerBios));
-    }, [customPlayerBios]);
+        // Listen for auth state — fires immediately with current user or null.
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            if (firebaseUser) {
+                // Slight delay to ensure the Auth token is fully propagated to the Firestore SDK
+                await new Promise(r => setTimeout(r, 500));
 
-    // Handle Hash Route Syncing & Browser Back/Forward
+                let profile = null;
+                try { 
+                    profile = await getUser(firebaseUser.uid); 
+                } catch (err) {
+                    console.error("Failed to fetch user profile:", err);
+                }
+
+                if (profile) {
+                    // Known user with a Firestore profile — log them in
+                    setCurrentUser(profile);
+                    setIsAuthOpen(false);
+                } else {
+                    // Firebase Auth user exists but no Firestore profile yet.
+                    setCurrentUser(null);
+                    setIsAuthOpen(true);
+                }
+            } else {
+                setCurrentUser(null);
+                setIsAuthOpen(true);
+            }
+            setAuthReady(true);
+        });
+
+        return () => unsubscribe();
+    }, []);
+
+    // ── Hash Route Syncing & Browser Back/Forward ────────────────────────────
     const syncRouteFromHash = () => {
         const hash = window.location.hash.replace('#', '').trim();
         if (!hash) {
@@ -59,26 +95,19 @@ export default function App() {
             setGameSlugParam(null);
             return;
         }
-
         if (hash.startsWith('player-bio/')) {
-            const slug = hash.replace('player-bio/', '');
             setActiveTab('player-bio');
-            setPlayerSlugParam(slug);
+            setPlayerSlugParam(hash.replace('player-bio/', ''));
             setGameSlugParam(null);
         } else if (hash.startsWith('game/')) {
-            const slug = hash.replace('game/', '');
             setActiveTab('game');
-            setGameSlugParam(slug);
+            setGameSlugParam(hash.replace('game/', ''));
             setPlayerSlugParam(null);
         } else {
             const known = ['home', 'schedule', 'roster', 'stats', 'standings', 'film', 'player-props'];
-            if (known.includes(hash)) {
-                setActiveTab(hash);
-                setPlayerSlugParam(null);
-                setGameSlugParam(null);
-            } else {
-                setActiveTab('home');
-            }
+            setActiveTab(known.includes(hash) ? hash : 'home');
+            setPlayerSlugParam(null);
+            setGameSlugParam(null);
         }
     };
 
@@ -88,6 +117,7 @@ export default function App() {
         return () => window.removeEventListener('popstate', syncRouteFromHash);
     }, []);
 
+    // ── Navigation ───────────────────────────────────────────────────────────
     const navigateToTab = (tabId, updateHash = true) => {
         setActiveTab(tabId);
         setPlayerSlugParam(null);
@@ -116,89 +146,70 @@ export default function App() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    const handleOAuthLogin = (oauthUser) => {
-        // Automatically claim target player if available
-        if (oauthUser.claimedPlayerId && !claimedPlayers[oauthUser.claimedPlayerId]) {
-            setClaimedPlayers(prev => {
-                const updated = {
-                    ...prev,
-                    [oauthUser.claimedPlayerId]: { claimedBy: oauthUser.name, phone: oauthUser.phone, email: oauthUser.email }
-                };
-                localStorage.setItem('claimed_players', JSON.stringify(updated));
-                return updated;
-            });
+    // ── Auth Handlers (called by AuthPortal) ─────────────────────────────────
+
+
+
+    // Full email signup after roster verification or fan registration
+    const handleSignup = async (uid, { firstName, lastName, name, phone, email, username, claimedPlayerId, matchedPlayerName, favoritePlayer }) => {
+        if (claimedPlayerId) {
+            const claimData = { claimedBy: name, phone, email };
+            await claimPlayer(claimedPlayerId, claimData);
+            setClaimedPlayers(prev => ({ ...prev, [claimedPlayerId]: claimData }));
         }
-        setCurrentUser(oauthUser);
-        localStorage.setItem('monkey_kings_user', JSON.stringify(oauthUser));
-        setIsAuthOpen(false);
-    };
 
-    const handleLogin = (email) => {
-        const name = email.split('@')[0];
-        const user = { name: name.charAt(0).toUpperCase() + name.slice(1), email, provider: 'Email Auth', tokens: 1250 };
-        setCurrentUser(user);
-        localStorage.setItem('monkey_kings_user', JSON.stringify(user));
-        setIsAuthOpen(false);
-    };
-
-    const handleSignup = ({ firstName, lastName, name, phone, email, claimedPlayerId, matchedPlayerName }) => {
-        // Register claim
-        setClaimedPlayers(prev => {
-            const updated = {
-                ...prev,
-                [claimedPlayerId]: { claimedBy: name, phone: phone, email: email }
-            };
-            localStorage.setItem('claimed_players', JSON.stringify(updated));
-            return updated;
-        });
-
-        const user = {
-            firstName: firstName,
-            lastName: lastName,
-            name: name,
-            phone: phone,
-            email: email,
-            claimedPlayerId: claimedPlayerId,
-            provider: 'Verified Teammate',
-            tokens: 1500
+        const userProfile = {
+            firstName, lastName, name, phone, email, username,
+            ...(claimedPlayerId ? { claimedPlayerId } : {}),
+            ...(favoritePlayer ? { favoritePlayer } : {}),
+            provider: claimedPlayerId ? 'Verified Teammate' : 'Registered Fan',
+            tokens: claimedPlayerId ? 1500 : 1250,
         };
 
-        setCurrentUser(user);
-        localStorage.setItem('monkey_kings_user', JSON.stringify(user));
-        alert(`🎉 3-Way Verification Success!\n\nWelcome ${name}! Your details matched official roster record (${matchedPlayerName}). You have automatically claimed your player profile (+250 Bonus Tokens awarded).`);
+        await saveUser(uid, userProfile);
+        const saved = await getUser(uid);
+        setCurrentUser(saved);
+        
+        if (claimedPlayerId) {
+            alert(`🎉 3-Way Verification Success!\n\nWelcome ${name}! Your details matched official roster record (${matchedPlayerName}). You have automatically claimed your player profile (+250 Bonus Tokens awarded).`);
+        } else {
+            alert(`🎉 Registration Success!\n\nWelcome ${name}! Your fan account has been created.`);
+        }
         setIsAuthOpen(false);
     };
 
-    const handleSavePlayerCustomization = (updatedData) => {
-        setCustomPlayerBios(prev => {
-            const updated = {
-                ...prev,
-                [updatedData.id]: updatedData
-            };
-            localStorage.setItem('custom_player_bios', JSON.stringify(updated));
-            return updated;
-        });
-        alert(`✨ Player profile for ${updatedData.id} successfully updated and saved!`);
+    const handleSavePlayerCustomization = async (updatedData) => {
+        try {
+            await saveCustomBio(updatedData.id, updatedData);
+            setCustomPlayerBios(prev => ({ ...prev, [updatedData.id]: updatedData }));
+            alert(`✨ Player profile for ${updatedData.id} successfully updated and saved!`);
+        } catch (error) {
+            console.error("Failed to save bio:", error);
+            alert(`❌ Failed to save profile: ${error.message}`);
+        }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         if (confirm('Are you sure you want to sign out?')) {
-            localStorage.removeItem('monkey_kings_user');
+            await signOut(auth);
             setCurrentUser(null);
             setIsAuthOpen(true);
         }
     };
 
-    const handleUpdateTokens = (delta) => {
-        if (!currentUser) return;
-        const updated = { ...currentUser, tokens: (currentUser.tokens || 1250) + delta };
+    const handleUpdateTokens = async (delta) => {
+        if (!currentUser?.uid) return;
+        const newTokens = (currentUser.tokens || 1250) + delta;
+        const updated = { ...currentUser, tokens: newTokens };
         setCurrentUser(updated);
-        localStorage.setItem('monkey_kings_user', JSON.stringify(updated));
+        await updateUser(currentUser.uid, { tokens: newTokens });
     };
+
+    // Don't render until Firebase has resolved auth state (prevents modal flash)
+    if (!authReady) return null;
 
     return (
         <div className={`app-wrapper ${!currentUser ? 'auth-locked' : ''}`}>
-            {/* ESPN HEADER */}
             <Header
                 activeSeason={activeSeason}
                 setActiveSeason={setActiveSeason}
@@ -206,12 +217,12 @@ export default function App() {
                 onOpenAuth={() => setIsAuthOpen(true)}
                 onOpenTicketModal={() => setIsTicketOpen(true)}
                 onLogout={handleLogout}
+                onNavigate={navigateToTab}
+                onOpenPlayerBio={handleOpenPlayerBio}
             />
 
-            {/* NAV BAR */}
             <Navbar activeTab={activeTab} onNavigate={(tab) => navigateToTab(tab)} />
 
-            {/* MAIN CONTENT AREA */}
             <main className="main-content-container">
                 {activeTab === 'home' && (
                     <HomePage
@@ -223,10 +234,7 @@ export default function App() {
                     />
                 )}
                 {activeTab === 'schedule' && (
-                    <SchedulePage
-                        activeSeason={activeSeason}
-                        onOpenGamePage={handleOpenGamePage}
-                    />
+                    <SchedulePage activeSeason={activeSeason} onOpenGamePage={handleOpenGamePage} />
                 )}
                 {activeTab === 'roster' && (
                     <RosterPage
@@ -236,10 +244,7 @@ export default function App() {
                     />
                 )}
                 {activeTab === 'stats' && (
-                    <StatsPage
-                        activeSeason={activeSeason}
-                        onOpenPlayerBio={handleOpenPlayerBio}
-                    />
+                    <StatsPage activeSeason={activeSeason} onOpenPlayerBio={handleOpenPlayerBio} />
                 )}
                 {activeTab === 'standings' && (
                     <StandingsPage activeSeason={activeSeason} />
@@ -250,10 +255,7 @@ export default function App() {
                     />
                 )}
                 {activeTab === 'player-props' && (
-                    <PlayerPropsPage
-                        currentUser={currentUser}
-                        onUpdateTokens={handleUpdateTokens}
-                    />
+                    <PlayerPropsPage currentUser={currentUser} onUpdateTokens={handleUpdateTokens} />
                 )}
                 {activeTab === 'player-bio' && (
                     <PlayerBioPage
@@ -276,17 +278,14 @@ export default function App() {
                 )}
             </main>
 
-            {/* MODALS */}
             <AuthPortal
                 isOpen={isAuthOpen}
                 claimedPlayers={claimedPlayers}
-                onClose={() => setIsAuthOpen(false)}
-                onLogin={handleLogin}
-                onSignup={handleSignup}
-                onOAuthLogin={handleOAuthLogin}
-                onDemoLogin={() => {
-                    handleLogin('demo@monkeykings.com');
+                onLogin={(user, profile) => {
+                    setCurrentUser(profile);
+                    setIsAuthOpen(false);
                 }}
+                onSignup={handleSignup}
             />
             <TicketModal
                 isOpen={isTicketOpen}

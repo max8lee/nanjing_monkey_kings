@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port 3000 --host",
-    "build": "vite build",
+    "build": "vite build && cp -r assets dist/",
     "preview": "vite preview"
   },
   "dependencies": {
+    "firebase": "^12.17.1",
     "lucide-react": "^0.479.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

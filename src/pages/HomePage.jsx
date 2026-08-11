@@ -1,5 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, MapPin, Trophy, Flame, Play, HelpCircle, ArrowRight } from 'lucide-react';
+import { 
+    DATA_SCHEDULE_SEASON1, 
+    DATA_SCHEDULE_SEASON2,
+    DATA_STATS_SEASON1,
+    DATA_STATS_SEASON2,
+    DATA_ROSTER_SEASON1,
+    DATA_ROSTER_SEASON2,
+    getPlayerSlug
+} from '../data/teamData';
 
 export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, onOpenGamePage, onOpenTicketModal }) {
     const [timeLeft, setTimeLeft] = useState({ d: '03', h: '14', m: '22', s: '45' });
@@ -30,49 +39,83 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
         alert(`🔥 Thanks for voting! Your pick for ${opt.toUpperCase()} has been registered in the Nanjing fan poll.`);
     };
 
+    const nextGame = useMemo(() => {
+        const schedule = activeSeason === 'season1' ? DATA_SCHEDULE_SEASON1 : DATA_SCHEDULE_SEASON2;
+        // The schedule is sorted from latest to earliest, so we want the last item that is 'UPCOMING'
+        const upcomingGames = schedule.filter(g => g.status === 'UPCOMING');
+        return upcomingGames.length > 0 ? upcomingGames[upcomingGames.length - 1] : null;
+    }, [activeSeason]);
+
+    const statLeaders = useMemo(() => {
+        const stats = activeSeason === 'season1' ? DATA_STATS_SEASON1 : DATA_STATS_SEASON2;
+        const roster = activeSeason === 'season1' ? DATA_ROSTER_SEASON1 : DATA_ROSTER_SEASON2;
+        
+        if (!stats.length) return null;
+
+        const getLeader = (metric) => {
+            const maxVal = Math.max(...stats.map(s => s[metric]));
+            const leaderStat = stats.find(s => s[metric] === maxVal);
+            if (!leaderStat) return null;
+            const playerRosterInfo = roster.find(r => r.id === leaderStat.id);
+            return {
+                name: leaderStat.name,
+                val: maxVal.toFixed(1),
+                img: playerRosterInfo?.img || '/assets/logo.webp',
+                jersey: playerRosterInfo?.jersey || '#00',
+                pos: playerRosterInfo?.pos || 'Unknown',
+                slug: playerRosterInfo ? getPlayerSlug(playerRosterInfo.name) : ''
+            };
+        };
+
+        return {
+            pts: getLeader('ppg'),
+            reb: getLeader('rpg'),
+            ast: getLeader('apg')
+        };
+    }, [activeSeason]);
+
     return (
         <div className="page-section active">
             {/* HERO SPOTLIGHT BANNER */}
-            <div className="hero-banner-card">
-                <div className="hero-content">
-                    <span className="hero-badge">
-                        <Flame size={14} style={{ marginRight: '4px' }} /> NEXT MATCHUP SPOTLIGHT
-                    </span>
-                    <h2>MONKEY KINGS VS GOLD LIONS</h2>
-                    <p className="hero-match-meta">
-                        <Calendar size={14} /> AUG 15 • 19:35 PM PST &nbsp;|&nbsp; <MapPin size={14} /> Telegraph Hill Community Center
-                    </p>
+            {nextGame && (
+                <div className="hero-banner-card">
+                    <div className="hero-content">
+                        <span className="hero-badge">
+                            <Flame size={14} style={{ marginRight: '4px' }} /> NEXT MATCHUP SPOTLIGHT
+                        </span>
+                        <h2>MONKEY KINGS VS {nextGame.opp.toUpperCase()}</h2>
+                        <p className="hero-match-meta">
+                            <Calendar size={14} /> {nextGame.date} PST &nbsp;|&nbsp; <MapPin size={14} /> {nextGame.venue}
+                        </p>
 
-                    {/* COUNTDOWN TIMER */}
-                    <div className="countdown-widget">
-                        <div className="time-block">
-                            <span className="number">{timeLeft.d}</span>
-                            <span className="label">DAYS</span>
+                        {/* COUNTDOWN TIMER */}
+                        <div className="countdown-widget">
+                            <div className="time-block">
+                                <span className="number">{timeLeft.d}</span>
+                                <span className="label">DAYS</span>
+                            </div>
+                            <div className="time-block">
+                                <span className="number">{timeLeft.h}</span>
+                                <span className="label">HOURS</span>
+                            </div>
+                            <div className="time-block">
+                                <span className="number">{timeLeft.m}</span>
+                                <span className="label">MINS</span>
+                            </div>
+                            <div className="time-block">
+                                <span className="number">{timeLeft.s}</span>
+                                <span className="label">SECS</span>
+                            </div>
                         </div>
-                        <div className="time-block">
-                            <span className="number">{timeLeft.h}</span>
-                            <span className="label">HOURS</span>
-                        </div>
-                        <div className="time-block">
-                            <span className="number">{timeLeft.m}</span>
-                            <span className="label">MINS</span>
-                        </div>
-                        <div className="time-block">
-                            <span className="number">{timeLeft.s}</span>
-                            <span className="label">SECS</span>
-                        </div>
-                    </div>
 
-                    <div className="hero-actions">
-                        <button className="btn-hero-primary" onClick={onOpenTicketModal}>
-                            🎟️ RESERVE COURTSIDE SEATS
-                        </button>
-                        <button className="btn-hero-secondary" onClick={() => onNavigate('player-props')}>
-                            🎯 PLACE PROP PICKS
-                        </button>
+                        <div className="hero-actions">
+                            <button className="btn-hero-secondary" onClick={() => onNavigate('player-props')}>
+                                🎯 PLACE PROP PICKS
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
 
             {/* THREE COLUMN GRID */}
             <div className="home-grid-layout">
@@ -105,47 +148,53 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
                 <div className="leaders-column">
                     <h3 className="section-title">⭐ SEASON STAT LEADERS</h3>
                     
-                    <div className="leader-box" onClick={() => onOpenPlayerBio('arjun-virmani')}>
-                        <div className="leader-meta">
-                            <span className="category">POINTS PER GAME</span>
-                            <span className="stat-val gold-text">13.3 PPG</span>
-                        </div>
-                        <div className="leader-player-row">
-                            <img src="assets/lin_wei.jpg" alt="Arjun Virmani" />
-                            <div>
-                                <strong>Arjun Virmani</strong>
-                                <span>#10 • Guard</span>
+                    {statLeaders && statLeaders.pts && (
+                        <div className="leader-box" onClick={() => onOpenPlayerBio(statLeaders.pts.slug)}>
+                            <div className="leader-meta">
+                                <span className="category">POINTS PER GAME</span>
+                                <span className="stat-val gold-text">{statLeaders.pts.val} PPG</span>
+                            </div>
+                            <div className="leader-player-row">
+                                <img src={statLeaders.pts.img} alt={statLeaders.pts.name} />
+                                <div>
+                                    <strong>{statLeaders.pts.name}</strong>
+                                    <span>{statLeaders.pts.jersey} • {statLeaders.pts.pos}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
 
-                    <div className="leader-box" onClick={() => onOpenPlayerBio('vaishik-kota')}>
-                        <div className="leader-meta">
-                            <span className="category">REBOUNDS PER GAME</span>
-                            <span className="stat-val">12.0 RPG</span>
-                        </div>
-                        <div className="leader-player-row">
-                            <img src="assets/full-logo.webp" alt="Vaishik Kota" />
-                            <div>
-                                <strong>Vaishik Kota (Vee)</strong>
-                                <span>#14 • Center</span>
+                    {statLeaders && statLeaders.reb && (
+                        <div className="leader-box" onClick={() => onOpenPlayerBio(statLeaders.reb.slug)}>
+                            <div className="leader-meta">
+                                <span className="category">REBOUNDS PER GAME</span>
+                                <span className="stat-val">{statLeaders.reb.val} RPG</span>
+                            </div>
+                            <div className="leader-player-row">
+                                <img src={statLeaders.reb.img} alt={statLeaders.reb.name} />
+                                <div>
+                                    <strong>{statLeaders.reb.name}</strong>
+                                    <span>{statLeaders.reb.jersey} • {statLeaders.reb.pos}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
 
-                    <div className="leader-box" onClick={() => onOpenPlayerBio('brendan-wong')}>
-                        <div className="leader-meta">
-                            <span className="category">ASSISTS PER GAME</span>
-                            <span className="stat-val">3.0 APG</span>
-                        </div>
-                        <div className="leader-player-row">
-                            <img src="assets/lin_wei.jpg" alt="Brendan Wong" />
-                            <div>
-                                <strong>Brendan Wong</strong>
-                                <span>#3 • Guard</span>
+                    {statLeaders && statLeaders.ast && (
+                        <div className="leader-box" onClick={() => onOpenPlayerBio(statLeaders.ast.slug)}>
+                            <div className="leader-meta">
+                                <span className="category">ASSISTS PER GAME</span>
+                                <span className="stat-val">{statLeaders.ast.val} APG</span>
+                            </div>
+                            <div className="leader-player-row">
+                                <img src={statLeaders.ast.img} alt={statLeaders.ast.name} />
+                                <div>
+                                    <strong>{statLeaders.ast.name}</strong>
+                                    <span>{statLeaders.ast.jersey} • {statLeaders.ast.pos}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* COL 3: FAN POLL & LEADERBOARD */}

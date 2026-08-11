@@ -72,6 +72,7 @@ body {
     display: flex;
     align-items: center;
     gap: 1.5rem;
+    flex: 1;
 }
 
 .header-logo {
@@ -79,6 +80,10 @@ body {
     height: 90px;
     object-fit: contain;
     filter: drop-shadow(0 0 12px rgba(255, 183, 3, 0.3));
+}
+
+.identity-info {
+    flex: 1;
 }
 
 .identity-info h1 {
@@ -103,6 +108,7 @@ body {
     gap: 0.75rem;
     flex-wrap: wrap;
     margin-top: 0.5rem;
+    width: 100%;
 }
 
 .stat-pill {
@@ -307,7 +313,7 @@ body {
 
 /* HERO BANNER */
 .hero-banner-card {
-    background: linear-gradient(135deg, rgba(23, 30, 46, 0.9) 0%, rgba(17, 22, 34, 0.95) 100%), url('assets/hero.jpg');
+    background: linear-gradient(135deg, rgba(23, 30, 46, 0.9) 0%, rgba(17, 22, 34, 0.95) 100%), url('/assets/hero.jpg');
     background-size: cover;
     background-position: center;
     border: 1px solid var(--border-color);

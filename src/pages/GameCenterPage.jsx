@@ -80,7 +80,7 @@ export default function GameCenterPage({ gameSlug, activeSeason, onBack, onOpenP
                 <div className="game-matchup-grid">
                     {/* NANJING MONKEY KINGS */}
                     <div className="team-side home">
-                        <img src="assets/full-logo.webp" alt="Nanjing Monkey Kings" className="game-team-logo" />
+                        <img src="/assets/full-logo.webp" alt="Nanjing Monkey Kings" className="game-team-logo" />
                         <div className="team-name-box">
                             <h2>Nanjing Monkey Kings</h2>
                             <span className="team-record">{isSeason1 ? 'Season 1 (1-5)' : 'Season 2 (1-2)'}</span>

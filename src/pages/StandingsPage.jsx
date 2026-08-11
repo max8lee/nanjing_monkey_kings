@@ -7,7 +7,7 @@ export default function StandingsPage({ activeSeason }) {
     return (
         <div className="page-section active">
             <div className="section-header-bar">
-                <h2>{activeSeason === 'season1' ? 'SEASON 1 VOLO MEN\'S LEAGUE STANDINGS' : 'SEASON 2 VOLO MEN\'S LEAGUE STANDINGS'}</h2>
+                <h2>{activeSeason === 'season1' ? 'SEASON 1 STANDINGS (MISSION)' : 'SEASON 2 STANDINGS (NORTH BEACH)'}</h2>
             </div>
 
             <div className="schedule-table-wrapper">
@@ -30,7 +30,7 @@ export default function StandingsPage({ activeSeason }) {
                         {sourceData.map((st) => (
                             <tr key={st.rk + st.team} className={st.highlight ? 'highlight-row' : ''}>
                                 <td><strong>{st.rk}</strong></td>
-                                <td>{st.highlight ? '🏀 ' : ''}<strong>{st.team}</strong></td>
+                                <td>{st.highlight ? '🐵 ' : ''}<strong>{st.team}</strong></td>
                                 <td>{st.w}</td>
                                 <td>{st.l}</td>
                                 <td>{st.pct}</td>

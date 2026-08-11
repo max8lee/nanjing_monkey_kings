@@ -1,0 +1,75 @@
+/**
+ * firebaseDb.js
+ * Thin wrappers around Firestore so the rest of the app never imports
+ * Firebase directly.
+ *
+ * Collections:
+ *   users/          — one doc per user, keyed by Firebase Auth uid
+ *   claimedPlayers/ — one doc per claimed player, keyed by player id
+ *   customBios/     — custom bio overrides per player id
+ */
+
+import { doc, getDoc, setDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
+import { db } from './firebase';
+
+// ─── Users ────────────────────────────────────────────────────────────────────
+
+export async function getUser(uid) {
+    const snap = await getDoc(doc(db, 'users', uid));
+    return snap.exists() ? { uid, ...snap.data() } : null;
+}
+
+export async function saveUser(uid, data) {
+    await setDoc(doc(db, 'users', uid), data, { merge: true });
+}
+
+export async function updateUser(uid, partial) {
+    await updateDoc(doc(db, 'users', uid), partial);
+}
+
+// ─── Claimed Players ──────────────────────────────────────────────────────────
+
+export async function getAllClaimedPlayers() {
+    const snap = await getDocs(collection(db, 'claimedPlayers'));
+    const result = {};
+    snap.forEach(d => { result[d.id] = d.data(); });
+    return result;
+}
+
+export async function claimPlayer(playerId, claimData) {
+    await setDoc(doc(db, 'claimedPlayers', playerId), claimData);
+}
+
+// ─── Custom Player Bios ───────────────────────────────────────────────────────
+
+export async function getAllCustomBios() {
+    const snap = await getDocs(collection(db, 'customBios'));
+    const result = {};
+    snap.forEach(d => { result[d.id] = d.data(); });
+    return result;
+}
+
+export async function saveCustomBio(playerId, data) {
+    await setDoc(doc(db, 'customBios', playerId), data, { merge: true });
+}
+
+// Username mappings
+export async function claimUsername(username, authEmail) {
+    try {
+        await setDoc(doc(db, 'usernames', username.toLowerCase()), { email: authEmail });
+    } catch (e) {
+        console.error("Error claiming username:", e);
+    }
+}
+
+export async function getAuthEmailByUsername(username) {
+    try {
+        const d = await getDoc(doc(db, 'usernames', username.toLowerCase()));
+        if (d.exists()) {
+            return d.data().email;
+        }
+    } catch (e) {
+        console.error("Error looking up username:", e);
+    }
+    return null;
+}

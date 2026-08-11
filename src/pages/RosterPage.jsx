@@ -16,7 +16,7 @@ export default function RosterPage({ activeSeason, customPlayerBios = {}, onOpen
     return (
         <div className="page-section active">
             <div className="section-header-bar">
-                <h2>{activeSeason === 'season1' ? 'SEASON 1 OFFICIAL TEAM ROSTER' : 'SEASON 2 OFFICIAL TEAM ROSTER'}</h2>
+                <h2>{activeSeason === 'season1' ? 'SEASON 1 ROSTER' : 'SEASON 2 ROSTER'}</h2>
                 <div className="filter-group">
                     <button className={`filter-chip ${posFilter === 'all' ? 'active' : ''}`} onClick={() => setPosFilter('all')}>ALL POSITIONS</button>
                     <button className={`filter-chip ${posFilter === 'guard' ? 'active' : ''}`} onClick={() => setPosFilter('guard')}>GUARDS</button>
