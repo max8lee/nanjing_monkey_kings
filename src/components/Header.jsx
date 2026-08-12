@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Trophy, Ticket, User, LogOut, ShieldCheck, LogIn } from 'lucide-react';
+import { Trophy, Ticket, User, LogOut, ShieldCheck, LogIn, ArrowRight } from 'lucide-react';
 import { DATA_STANDINGS_SEASON1, DATA_STANDINGS_SEASON2 } from '../data/teamData';
 
 export default function Header({ 
@@ -35,12 +35,53 @@ export default function Header({
             <div className="team-identity">
                 <img src="/assets/full-logo.webp" alt="Nanjing Monkey Kings Logo" className="header-logo" />
                 <div className="identity-info">
-                    <div className="league-meta">
-                        VOLO BASKETBALL • <span id="current-season-badge">
-                            {activeSeason === 'season1' ? 'SEASON 1 (MAY 18 - JUN 29 • 6 WEEKS)' : 'SEASON 2 (JUL 20 - SEP 7 • 7 WEEKS)'}
-                        </span>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
+                        <div>
+                            <div className="league-meta">
+                                VOLO BASKETBALL • <span id="current-season-badge">
+                                    {activeSeason === 'season1' ? 'SEASON 1 (MAY 18 - JUN 29 • 6 WEEKS)' : 'SEASON 2 (JUL 20 - SEP 7 • 7 WEEKS)'}
+                                </span>
+                            </div>
+                            <h1>NANJING MONKEY KINGS</h1>
+                        </div>
+
+                        {currentUser && (
+                            <div 
+                                className="user-profile-badge" 
+                                style={{ 
+                                    cursor: currentUser.claimedPlayerId ? 'pointer' : 'default',
+                                    transition: 'transform 0.2s',
+                                    padding: '0.6rem 1.25rem',
+                                    background: 'rgba(255,255,255,0.08)',
+                                    border: '1px solid var(--gold-primary)',
+                                    marginTop: '-5px'
+                                }}
+                                onClick={() => currentUser.claimedPlayerId && onOpenPlayerBio(currentUser.claimedPlayerId)}
+                                title={currentUser.claimedPlayerId ? "View Player Profile" : ""}
+                                onMouseOver={(e) => currentUser.claimedPlayerId && (e.currentTarget.style.transform = 'scale(1.03)')}
+                                onMouseOut={(e) => currentUser.claimedPlayerId && (e.currentTarget.style.transform = 'scale(1)')}
+                            >
+                                {currentUser.avatar ? (
+                                    <img src={currentUser.avatar} alt="User Avatar" style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+                                ) : (
+                                    <User size={24} className="gold-text" />
+                                )}
+                                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                    <span className="user-name" style={{ fontSize: '1.05rem' }}>{currentUser.name || 'Fan User'}</span>
+                                    {currentUser.claimedPlayerId ? (
+                                        <span style={{ fontSize: '0.75rem', color: 'var(--gold-accent)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 'bold' }}>
+                                            Go to Player Profile <ArrowRight size={12} />
+                                        </span>
+                                    ) : (
+                                        <span style={{ fontSize: '0.75rem', color: '#34D399', display: 'flex', alignItems: 'center', gap: '2px' }}>
+                                            <ShieldCheck size={12} /> {currentUser.provider || 'Registered Fan'}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
-                    <h1>NANJING MONKEY KINGS</h1>
+
                     <div className="team-stats-row">
                         <span className="stat-pill">
                             <strong>{teamRecord.record}</strong> Record
@@ -70,37 +111,10 @@ export default function Header({
                         
                         {/* USER PROFILE IN LINE WITH BUBBLES */}
                         {currentUser ? (
-                            <>
-                                <div 
-                                    className="user-profile-badge" 
-                                    style={{ 
-                                        marginLeft: 'auto', 
-                                        cursor: currentUser.claimedPlayerId ? 'pointer' : 'default',
-                                        transition: 'transform 0.2s',
-                                    }}
-                                    onClick={() => currentUser.claimedPlayerId && onOpenPlayerBio(currentUser.claimedPlayerId)}
-                                    title={currentUser.claimedPlayerId ? "View Player Profile" : ""}
-                                    onMouseOver={(e) => currentUser.claimedPlayerId && (e.currentTarget.style.transform = 'scale(1.02)')}
-                                    onMouseOut={(e) => currentUser.claimedPlayerId && (e.currentTarget.style.transform = 'scale(1)')}
-                                >
-                                    {currentUser.avatar ? (
-                                        <img src={currentUser.avatar} alt="User Avatar" style={{ width: '22px', height: '22px', borderRadius: '50%' }} />
-                                    ) : (
-                                        <User size={16} className="gold-text" />
-                                    )}
-                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                        <span className="user-name">{currentUser.name || 'Fan User'}</span>
-                                        {currentUser.provider && (
-                                            <span style={{ fontSize: '0.65rem', color: '#34D399', display: 'flex', alignItems: 'center', gap: '2px' }}>
-                                                <ShieldCheck size={10} /> {currentUser.provider}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <span className="tokens-tag">
-                                        <Trophy size={14} /> {(currentUser.tokens || 1250).toLocaleString()} PTS
-                                    </span>
-                                </div>
-                                
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: 'auto' }}>
+                                <span className="tokens-tag" style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>
+                                    <Trophy size={16} /> {(currentUser.tokens || 1250).toLocaleString()} PTS
+                                </span>
                                 {/* EXIT BUBBLE */}
                                 <button 
                                     className="stat-pill" 
@@ -113,12 +127,14 @@ export default function Header({
                                         gap: '6px',
                                         background: 'rgba(239, 68, 68, 0.1)',
                                         borderColor: 'rgba(239, 68, 68, 0.3)',
-                                        color: '#EF4444'
+                                        color: '#EF4444',
+                                        padding: '4px 10px',
+                                        fontSize: '0.75rem'
                                     }}
                                 >
-                                    <LogOut size={14} /> EXIT
+                                    <LogOut size={12} /> LOG OUT
                                 </button>
-                            </>
+                            </div>
                         ) : (
                             <button className="btn-hero-secondary" style={{ padding: '0.3rem 1rem', fontSize: '0.8rem', borderRadius: '50px', marginLeft: 'auto' }} onClick={onOpenAuth}>
                                 <LogIn size={13} style={{ marginRight: '4px' }} /> SIGN IN

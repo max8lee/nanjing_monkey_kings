@@ -9,8 +9,9 @@
  *   customBios/     — custom bio overrides per player id
  */
 
-import { doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot, where, writeBatch, increment } from 'firebase/firestore';
 import { db } from './firebase';
+import { DATA_STATS_SEASON2, DATA_SCHEDULE_SEASON2 } from './data/teamData';
 
 // ─── Users ────────────────────────────────────────────────────────────────────
 
@@ -128,4 +129,130 @@ export async function getSeasonPlayerLogs(seasonId) {
     const logs = [];
     snap.forEach(d => { logs.push({ id: d.id, ...d.data() }); });
     return logs;
+}
+
+export async function submitParlay(parlayData) {
+    const docRef = doc(collection(db, 'parlays'));
+    await setDoc(docRef, { ...parlayData, id: docRef.id });
+    return docRef.id;
+}
+
+export async function getUserParlays(uid) {
+    if (!uid) return [];
+    const q = query(collection(db, 'parlays'), where('uid', '==', uid));
+    const snap = await getDocs(q);
+    const parlays = [];
+    snap.forEach(doc => {
+        parlays.push(doc.data());
+    });
+    // sort by timestamp descending
+    return parlays.sort((a, b) => b.timestamp - a.timestamp);
+}
+
+// ─── ADMIN: SETTLE PARLAYS ───────────────────────────────────────────────────
+
+export async function adminSettleParlays() {
+    const q = query(collection(db, 'parlays'), where('status', '==', 'OPEN'));
+    const snap = await getDocs(q);
+    
+    const logsSnap = await getDocs(collection(db, 'seasons', 'season2', 'player_game_logs'));
+    const logs = [];
+    logsSnap.forEach(d => logs.push({ id: d.id, ...d.data() }));
+
+    const batch = writeBatch(db);
+    let count = 0;
+
+    snap.forEach(docSnap => {
+        const parlay = docSnap.data();
+        const updatedLegs = parlay.legs.map(leg => {
+            if (leg.status === 'WON' || leg.status === 'LOST') return leg;
+            
+            // Find player ID from DATA_STATS_SEASON2
+            const statObj = DATA_STATS_SEASON2.find(p => p.name === leg.player);
+            const pId = statObj ? statObj.id : null;
+            
+            const playerLogs = logs.filter(l => 
+                l.playerName === leg.player || 
+                (pId && l.playerId === pId) || 
+                (pId && l.id && l.id.includes(pId)) ||
+                (l.id && l.id.includes(leg.player.split(' ')[0].toLowerCase()))
+            );
+            
+            // Filter out games that started before the parlay was placed
+            const validLogs = playerLogs.filter(log => {
+                if (!log.gameId) return false;
+                const gameSchedule = DATA_SCHEDULE_SEASON2.find(g => g.gameSlug === `game-${log.gameId}`);
+                if (!gameSchedule || !gameSchedule.date) return false;
+                
+                const dateParts = gameSchedule.date.split(' • ');
+                if (dateParts.length !== 2) return false;
+                
+                const gameTimestamp = new Date(`${dateParts[0]} 2026 ${dateParts[1]}`).getTime();
+                return gameTimestamp > parlay.timestamp;
+            });
+            
+            if (validLogs.length === 0) {
+                // Check if ANY game was logged after the parlay was placed
+                const anyGamePlayed = logs.some(l => {
+                    if (!l.gameId) return false;
+                    const gs = DATA_SCHEDULE_SEASON2.find(g => g.gameSlug === `game-${l.gameId}`);
+                    if (!gs || !gs.date) return false;
+                    const parts = gs.date.split(' • ');
+                    if (parts.length !== 2) return false;
+                    const tStamp = new Date(`${parts[0]} 2026 ${parts[1]}`).getTime();
+                    return tStamp > parlay.timestamp;
+                });
+                
+                if (anyGamePlayed) {
+                    return { ...leg, status: 'VOID', actual: 'DNP' };
+                }
+                return leg;
+            }
+            
+            validLogs.sort((a, b) => b.gameId - a.gameId);
+            const latestLog = validLogs[0];
+            
+            let actual = 0;
+            if (leg.stat === 'Points Scored') actual = latestLog.pts || 0;
+            else if (leg.stat === 'Total Rebounds') actual = (latestLog.oreb || 0) + (latestLog.dreb || 0) || (latestLog.reb || 0);
+            else if (leg.stat === 'Points + Rebounds') actual = (latestLog.pts || 0) + ((latestLog.oreb || 0) + (latestLog.dreb || 0) || (latestLog.reb || 0));
+            else if (leg.stat === 'Assists') actual = latestLog.ast || 0;
+            else if (leg.stat === '3-Pointers Made') actual = latestLog.p3m || 0;
+
+            const lineNum = parseFloat(leg.line);
+            let legStatus = 'OPEN';
+            if (leg.pick === 'OVER') legStatus = actual > lineNum ? 'WON' : 'LOST';
+            else legStatus = actual < lineNum ? 'WON' : 'LOST';
+
+            return { ...leg, actual, status: legStatus };
+        });
+
+        let anyLost = updatedLegs.some(l => l.status === 'LOST');
+        let anyVoid = updatedLegs.some(l => l.status === 'VOID');
+        let anyOpen = updatedLegs.some(l => l.status === 'OPEN' || !l.status);
+        
+        let newStatus = 'OPEN';
+        if (anyVoid) newStatus = 'VOID';
+        else if (anyLost) newStatus = 'LOST';
+        else if (!anyOpen) newStatus = 'WON';
+
+        if (newStatus !== 'OPEN') {
+            batch.update(docSnap.ref, { legs: updatedLegs, status: newStatus });
+            count++;
+            if (newStatus === 'WON') {
+                const userRef = doc(db, 'users', parlay.uid);
+                batch.update(userRef, { tokens: increment(parlay.potentialPayout) });
+            } else if (newStatus === 'VOID') {
+                const userRef = doc(db, 'users', parlay.uid);
+                batch.update(userRef, { tokens: increment(parlay.wager) }); // Refund the wager
+            }
+        }
+    });
+
+    if (count > 0) {
+        await batch.commit();
+        return `Successfully settled ${count} parlays!`;
+    } else {
+        return "No parlays were ready to settle based on available stats.";
+    }
 }

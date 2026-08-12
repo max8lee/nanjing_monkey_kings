@@ -1,5 +1,5 @@
 import React from 'react';
-import { DATA_ROSTER_SEASON1, DATA_ROSTER_SEASON2, getPlayerSlug, calculatePlayerSeasonStats, formatDateTime } from '../data/teamData';
+import { DATA_ROSTER_SEASON1, DATA_ROSTER_SEASON2, getPlayerSlug, calculatePlayerSeasonStats, formatDateTime, formatSeasonName } from '../data/teamData';
 import { ArrowLeft, Edit3, ShieldCheck, Crown } from 'lucide-react';
 
 export default function PlayerBioPage({ 
@@ -85,7 +85,7 @@ export default function PlayerBioPage({
                         {p.nickname && <span className="nickname-pill">"{p.nickname}"</span>}
                         {isOwner && (
                             <span className="claimed-badge owner">
-                                <Crown size={12} /> YOUR CLAIMED PLAYER
+                                <Crown size={12} /> YOU
                             </span>
                         )}
                         {isClaimedByOther && (
@@ -110,13 +110,13 @@ export default function PlayerBioPage({
 
             {/* BIOGRAPHY PARAGRAPH */}
             <div className="bio-card-box">
-                <h3>📖 PLAYER BIOGRAPHY</h3>
+                <h3>PLAYER BIOGRAPHY</h3>
                 <p>{p.bio}</p>
             </div>
 
             {/* DYNAMIC OFFICIAL SEASON STATS SUMMARY GRID */}
             <div className="bio-card-box">
-                <h3>📊 {activeSeason.toUpperCase()} DYNAMIC STATISTICAL AVERAGES</h3>
+                <h3>{formatSeasonName(activeSeason)} AVERAGES</h3>
                 <div className="bio-stats-summary-grid">
                     <div className="bio-stat-box"><span className="label">PPG</span><strong className="gold-text">{p.ppg}</strong></div>
                     <div className="bio-stat-box"><span className="label">RPG</span><strong>{p.rpg}</strong></div>
@@ -129,7 +129,7 @@ export default function PlayerBioPage({
 
             {/* PER-GAME LOG TABLE */}
             <div className="bio-card-box">
-                <h3>📅 GAME LOG</h3>
+                <h3>GAME LOG</h3>
                 <div className="schedule-table-wrapper">
                     <table className="espn-table">
                         <thead>

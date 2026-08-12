@@ -210,7 +210,7 @@ export default function HomePage({ activeSeason, seasonGames, seasonLogs, onNavi
                             <div className="leader-player-row">
                                 <img src={statLeaders.pts.img} alt={statLeaders.pts.name} />
                                 <div>
-                                    <strong>{statLeaders.pts.name}</strong>
+                                    <strong>{statLeaders.pts.name}</strong>{" "}
                                     <span>{statLeaders.pts.jersey} • {statLeaders.pts.pos}</span>
                                 </div>
                             </div>
@@ -226,7 +226,7 @@ export default function HomePage({ activeSeason, seasonGames, seasonLogs, onNavi
                             <div className="leader-player-row">
                                 <img src={statLeaders.reb.img} alt={statLeaders.reb.name} />
                                 <div>
-                                    <strong>{statLeaders.reb.name}</strong>
+                                    <strong>{statLeaders.reb.name}</strong>{" "}
                                     <span>{statLeaders.reb.jersey} • {statLeaders.reb.pos}</span>
                                 </div>
                             </div>
@@ -242,7 +242,7 @@ export default function HomePage({ activeSeason, seasonGames, seasonLogs, onNavi
                             <div className="leader-player-row">
                                 <img src={statLeaders.ast.img} alt={statLeaders.ast.name} />
                                 <div>
-                                    <strong>{statLeaders.ast.name}</strong>
+                                    <strong>{statLeaders.ast.name}</strong>{" "}
                                     <span>{statLeaders.ast.jersey} • {statLeaders.ast.pos}</span>
                                 </div>
                             </div>

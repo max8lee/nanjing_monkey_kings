@@ -7,8 +7,9 @@ export default function SchedulePage({ activeSeason, seasonGames, onOpenGamePage
     const sourceData = seasonGames.length > 0 ? seasonGames : (activeSeason === 'season1' ? DATA_SCHEDULE_SEASON1 : DATA_SCHEDULE_SEASON2);
 
     const list = sourceData.filter(item => {
-        if (filter === 'upcoming') return item.status === 'UPCOMING';
-        if (filter === 'results') return item.status !== 'UPCOMING';
+        const isUpcoming = (item.result !== 'W' && item.result !== 'L' && item.result !== 'T');
+        if (filter === 'upcoming') return isUpcoming;
+        if (filter === 'results') return !isUpcoming;
         return true;
     });
 

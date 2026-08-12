@@ -156,21 +156,21 @@ export default function AuthPortal({ isOpen, claimedPlayers = {}, onLogin, onSig
                         className={`auth-tab-btn ${authTab === 'login' ? 'active' : ''}`}
                         onClick={() => { setAuthTab('login'); setVerificationError(''); }}
                     >
-                        <LogIn size={16} /> SIGN IN
+                        <LogIn size={16} /> LOG IN
                     </button>
                     <button
                         type="button"
                         className={`auth-tab-btn ${authTab === 'signup' ? 'active' : ''}`}
                         onClick={() => { setAuthTab('signup'); setVerificationError(''); }}
                     >
-                        <UserPlus size={16} /> PLAYER
+                        <UserPlus size={16} /> SIGN UP: PLAYER
                     </button>
                     <button
                         type="button"
                         className={`auth-tab-btn ${authTab === 'fan_signup' ? 'active' : ''}`}
                         onClick={() => { setAuthTab('fan_signup'); setVerificationError(''); }}
                     >
-                        <UserPlus size={16} /> FAN
+                        <UserPlus size={16} /> SIGN UP: FAN
                     </button>
                 </div>
 

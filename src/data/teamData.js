@@ -112,6 +112,11 @@ export function getPlayerSlug(name) {
     return name.replace(/\s*\([^)]*\)/g, '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
+export function formatSeasonName(seasonId) {
+    if (!seasonId) return '';
+    return seasonId.toUpperCase().replace('SEASON', 'SEASON ');
+}
+
 export function formatDateTime(dateObj) {
     if (!dateObj) return '';
     if (typeof dateObj === 'string') return dateObj;

@@ -8,8 +8,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 async function check() {
-    const q = query(collection(db, 'seasons/season2/player_game_logs'), where('playerId', '==', 'p14'), where('gameId', '==', 3));
+    const q = query(collection(db, 'parlays'));
     const snap = await getDocs(q);
-    snap.forEach(d => console.log(d.id, d.data()));
+    snap.forEach(d => console.log(JSON.stringify(d.data(), null, 2)));
 }
 check();
