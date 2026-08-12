@@ -9,7 +9,7 @@
  *   customBios/     — custom bio overrides per player id
  */
 
-import { doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, getDocs, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase';
 
 // ─── Users ────────────────────────────────────────────────────────────────────
@@ -72,6 +72,35 @@ export async function claimUsername(username, authEmail) {
     }
 }
 
+export async function updateTokenLedger(username, increment) {
+    if (!username) return;
+    const docRef = doc(db, 'tokenLedger', username.toLowerCase());
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) {
+        await setDoc(docRef, { balance: Math.max(0, increment) });
+    } else {
+        const data = snap.data();
+        await updateDoc(docRef, { balance: Math.max(0, (data.balance || 0) + increment) });
+    }
+}
+
+// ─── Fan Polls ────────────────────────────────────────────────────────────────
+
+export function onPollUpdate(pollId, callback) {
+    return onSnapshot(doc(db, 'fanPolls', pollId), (docSnap) => {
+        if (docSnap.exists()) {
+            callback(docSnap.data());
+        } else {
+            callback({});
+        }
+    });
+}
+
+export async function submitPollVote(pollId, uid, option) {
+    if (!uid) return;
+    await setDoc(doc(db, 'fanPolls', pollId), { [uid]: option }, { merge: true });
+}
+
 export async function getAuthEmailByUsername(username) {
     try {
         const d = await getDoc(doc(db, 'usernames', username.toLowerCase()));
@@ -82,4 +111,21 @@ export async function getAuthEmailByUsername(username) {
         console.error("Error looking up username:", e);
     }
     return null;
+}
+
+// ─── Team Data (Games & Logs) ────────────────────────────────────────────────
+export async function getSeasonGames(seasonId) {
+    const snap = await getDocs(collection(db, 'seasons', seasonId, 'games'));
+    const games = [];
+    snap.forEach(d => { games.push({ id: d.id, ...d.data() }); });
+    // Sort games by gameId descending (latest game first) to match DATA_SCHEDULE_SEASON2 format
+    games.sort((a, b) => b.gameId - a.gameId);
+    return games;
+}
+
+export async function getSeasonPlayerLogs(seasonId) {
+    const snap = await getDocs(collection(db, 'seasons', seasonId, 'player_game_logs'));
+    const logs = [];
+    snap.forEach(d => { logs.push({ id: d.id, ...d.data() }); });
+    return logs;
 }

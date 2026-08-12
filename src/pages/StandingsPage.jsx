@@ -38,8 +38,8 @@ export default function StandingsPage({ activeSeason }) {
                                 <td>{st.home}</td>
                                 <td>{st.away}</td>
                                 <td>
-                                    <span className={st.strk.includes('W') ? 'stat-pill highlight' : 'stat-pill'}>
-                                        {st.strk}
+                                    <span className={st.strk?.includes('W') ? 'stat-pill highlight' : 'stat-pill'}>
+                                        {st.strk || '-'}
                                     </span>
                                 </td>
                                 <td>{st.l10}</td>

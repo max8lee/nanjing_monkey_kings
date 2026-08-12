@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { DATA_SCHEDULE_SEASON1, DATA_SCHEDULE_SEASON2 } from '../data/teamData';
+import { DATA_SCHEDULE_SEASON1, DATA_SCHEDULE_SEASON2, formatDateTime } from '../data/teamData';
 
-export default function SchedulePage({ activeSeason, onOpenGamePage }) {
+export default function SchedulePage({ activeSeason, seasonGames, onOpenGamePage }) {
     const [filter, setFilter] = useState('all');
 
-    const sourceData = activeSeason === 'season1' ? DATA_SCHEDULE_SEASON1 : DATA_SCHEDULE_SEASON2;
+    const sourceData = seasonGames.length > 0 ? seasonGames : (activeSeason === 'season1' ? DATA_SCHEDULE_SEASON1 : DATA_SCHEDULE_SEASON2);
 
     const list = sourceData.filter(item => {
         if (filter === 'upcoming') return item.status === 'UPCOMING';
@@ -50,7 +50,7 @@ export default function SchedulePage({ activeSeason, onOpenGamePage }) {
                     </thead>
                     <tbody>
                         {list.map((m) => {
-                            const hasBoxScore = m.status !== 'UPCOMING';
+                            const hasBoxScore = !!m.result || (m.status && m.status !== 'UPCOMING');
                             const gameSlug = m.gameSlug;
 
                             return (
@@ -60,12 +60,12 @@ export default function SchedulePage({ activeSeason, onOpenGamePage }) {
                                     style={{ cursor: hasBoxScore ? 'pointer' : 'default' }}
                                     onClick={hasBoxScore ? () => onOpenGamePage(gameSlug) : undefined}
                                 >
-                                    <td><strong>{m.date}</strong></td>
+                                    <td><strong>{formatDateTime(m.date)}</strong></td>
                                     <td>{m.isHome ? <strong>vs</strong> : '@'} {m.opp}</td>
-                                    <td>{m.venue}</td>
+                                    <td>{m.venue || 'Telegraph Hill Community Center'}</td>
                                     <td>
-                                        <span className={m.status.includes('W') ? 'stat-pill highlight' : 'stat-pill'}>
-                                            {m.status}
+                                        <span className={(m.result === 'W' || m.status?.includes('W')) ? 'stat-pill highlight' : 'stat-pill'}>
+                                            {(m.result === 'W' || m.result === 'L' || m.result === 'T') ? `${m.result} ${Math.max(m.finalTotal || 0, m.oppFinalTotal || 0)}-${Math.min(m.finalTotal || 0, m.oppFinalTotal || 0)}` : (m.status || 'UPCOMING')}
                                         </span>
                                     </td>
                                 </tr>

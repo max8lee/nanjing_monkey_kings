@@ -9,6 +9,8 @@ import {
     claimPlayer,
     getAllCustomBios,
     saveCustomBio,
+    getSeasonGames,
+    getSeasonPlayerLogs
 } from './firebaseDb';
 
 import Header from './components/Header';
@@ -39,6 +41,8 @@ export default function App() {
     const [currentUser, setCurrentUser] = useState(null);
     const [claimedPlayers, setClaimedPlayers] = useState({});
     const [customPlayerBios, setCustomPlayerBios] = useState({});
+    const [seasonGames, setSeasonGames] = useState([]);
+    const [seasonLogs, setSeasonLogs] = useState([]);
 
     // authReady: true once Firebase has resolved the initial auth state
     // Prevents a flash of the auth modal for already-signed-in users
@@ -54,6 +58,7 @@ export default function App() {
         // Load shared data visible to all users
         getAllClaimedPlayers().then(setClaimedPlayers).catch(() => {});
         getAllCustomBios().then(setCustomPlayerBios).catch(() => {});
+
 
         // Listen for auth state — fires immediately with current user or null.
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -125,6 +130,13 @@ export default function App() {
         window.addEventListener('popstate', syncRouteFromHash);
         return () => window.removeEventListener('popstate', syncRouteFromHash);
     }, []);
+
+    useEffect(() => {
+        setSeasonGames([]);
+        setSeasonLogs([]);
+        getSeasonGames(activeSeason).then(setSeasonGames).catch(() => {});
+        getSeasonPlayerLogs(activeSeason).then(setSeasonLogs).catch(() => {});
+    }, [activeSeason]);
 
     // ── Navigation ───────────────────────────────────────────────────────────
     const navigateToTab = (tabId, updateHash = true) => {
@@ -245,7 +257,9 @@ export default function App() {
             <main className="main-content-container">
                 {activeTab === 'home' && (
                     <HomePage
-                        activeSeason={'season2'}
+                        activeSeason={activeSeason}
+                        seasonGames={seasonGames}
+                        seasonLogs={seasonLogs}
                         onNavigate={navigateToTab}
                         onOpenPlayerBio={handleOpenPlayerBio}
                         onOpenGamePage={handleOpenGamePage}
@@ -255,17 +269,26 @@ export default function App() {
                     />
                 )}
                 {activeTab === 'schedule' && (
-                    <SchedulePage activeSeason={activeSeason} onOpenGamePage={handleOpenGamePage} />
+                    <SchedulePage 
+                        activeSeason={activeSeason} 
+                        seasonGames={seasonGames}
+                        onOpenGamePage={handleOpenGamePage} 
+                    />
                 )}
                 {activeTab === 'roster' && (
                     <RosterPage
                         activeSeason={activeSeason}
                         customPlayerBios={customPlayerBios}
+                        seasonLogs={seasonLogs}
                         onOpenPlayerBio={handleOpenPlayerBio}
                     />
                 )}
                 {activeTab === 'stats' && (
-                    <StatsPage activeSeason={activeSeason} onOpenPlayerBio={handleOpenPlayerBio} />
+                    <StatsPage 
+                        activeSeason={activeSeason} 
+                        seasonLogs={seasonLogs}
+                        onOpenPlayerBio={handleOpenPlayerBio} 
+                    />
                 )}
                 {activeTab === 'standings' && (
                     <StandingsPage activeSeason={activeSeason} />
@@ -287,14 +310,20 @@ export default function App() {
                         currentUser={currentUser}
                         customPlayerBios={customPlayerBios}
                         claimedPlayers={claimedPlayers}
+                        seasonGames={seasonGames}
+                        seasonLogs={seasonLogs}
                         onBack={() => window.history.back()}
                         onOpenEditModal={(player) => setEditPlayerTarget(player)}
+                        onOpenGamePage={handleOpenGamePage}
                     />
                 )}
                 {activeTab === 'game' && (
                     <GameCenterPage
                         gameSlug={gameSlugParam}
                         activeSeason={activeSeason}
+                        seasonGames={seasonGames}
+                        seasonLogs={seasonLogs}
+                        customPlayerBios={customPlayerBios}
                         onBack={() => window.history.back()}
                         onOpenPlayerBio={handleOpenPlayerBio}
                     />

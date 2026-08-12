@@ -7,11 +7,13 @@ import {
     DATA_STATS_SEASON2,
     DATA_ROSTER_SEASON1,
     DATA_ROSTER_SEASON2,
-    getPlayerSlug
+    getPlayerSlug,
+    getMergedRoster,
+    formatDateTime
 } from '../data/teamData';
-import { getTopUsersByTokens } from '../firebaseDb';
+import { getTopUsersByTokens, onPollUpdate, submitPollVote } from '../firebaseDb';
 
-export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, onOpenGamePage, onOpenFilmPage, onOpenTicketModal, currentUser }) {
+export default function HomePage({ activeSeason, seasonGames, seasonLogs, onNavigate, onOpenPlayerBio, onOpenGamePage, onOpenFilmPage, onOpenTicketModal, currentUser }) {
     const [timeLeft, setTimeLeft] = useState({ d: '03', h: '14', m: '22', s: '45' });
     const [leaderboard, setLeaderboard] = useState([]);
 
@@ -20,16 +22,23 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
     }, []);
 
     const nextGame = useMemo(() => {
-        const schedule = activeSeason === 'season1' ? DATA_SCHEDULE_SEASON1 : DATA_SCHEDULE_SEASON2;
-        // The schedule is sorted from latest to earliest, so we want the last item that is 'UPCOMING'
-        const upcomingGames = schedule.filter(g => g.status === 'UPCOMING');
+        const schedule = seasonGames.length > 0 ? seasonGames : (activeSeason === 'season1' ? DATA_SCHEDULE_SEASON1 : DATA_SCHEDULE_SEASON2);
+        const upcomingGames = schedule.filter(g => {
+            const isWin = g.result === 'W' || g.status?.includes('W');
+            const isLoss = g.result === 'L' || g.status?.includes('L');
+            return !isWin && !isLoss;
+        });
         return upcomingGames.length > 0 ? upcomingGames[upcomingGames.length - 1] : null;
-    }, [activeSeason]);
+    }, [activeSeason, seasonGames]);
 
     useEffect(() => {
         if (!nextGame) return;
 
-        const [datePart, timePart] = nextGame.date.split(' • ');
+        const dateStr = formatDateTime(nextGame.date);
+        const parts = dateStr.split(' • ');
+        const datePart = parts[0] || 'AUG 01';
+        const timePart = parts[1] || '19:00';
+        
         // Assume 2026 and Pacific Daylight Time (GMT-0700) for summer games
         const targetDate = new Date(`${datePart}, 2026 ${timePart}:00 GMT-0700`);
 
@@ -60,14 +69,40 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
         return () => clearInterval(interval);
     }, [nextGame]);
 
-    const handlePollVote = (opt) => {
-        alert(`🔥 Thanks for voting! Your pick for ${opt.toUpperCase()} has been registered in the Nanjing fan poll.`);
+    const [pollVotes, setPollVotes] = useState({});
+
+    useEffect(() => {
+        const unsubscribe = onPollUpdate('poll_of_the_week_1', (data) => {
+            setPollVotes(data);
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const hasVoted = currentUser && pollVotes[currentUser.uid];
+
+    const getVoteCount = (optName) => {
+        return Object.values(pollVotes).filter(v => v === optName).length;
+    };
+    
+    const getTotalVotes = () => {
+        return Object.keys(pollVotes).length;
+    };
+
+    const handlePollVote = async (optName) => {
+        if (!currentUser) {
+            alert('You must be signed in to vote!');
+            return;
+        }
+        await submitPollVote('poll_of_the_week_1', currentUser.uid, optName);
     };
 
     const statLeaders = useMemo(() => {
-        const stats = activeSeason === 'season1' ? DATA_STATS_SEASON1 : DATA_STATS_SEASON2;
+        let stats;
         const roster = activeSeason === 'season1' ? DATA_ROSTER_SEASON1 : DATA_ROSTER_SEASON2;
         
+        const merged = getMergedRoster(activeSeason, {}, seasonLogs);
+        stats = merged.filter(p => p.gp > 0);
+
         if (!stats.length) return null;
 
         const getLeader = (metric) => {
@@ -103,7 +138,7 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
                         </span>
                         <h2>MONKEY KINGS VS {nextGame.opp.toUpperCase()}</h2>
                         <p className="hero-match-meta">
-                            <Calendar size={14} /> {nextGame.date} PST &nbsp;|&nbsp; <MapPin size={14} /> {nextGame.venue}
+                            <Calendar size={14} /> {formatDateTime(nextGame.date)} PST &nbsp;|&nbsp; <MapPin size={14} /> {nextGame.venue || 'Telegraph Hill Community Center'}
                         </p>
 
                         {/* COUNTDOWN TIMER */}
@@ -219,12 +254,39 @@ export default function HomePage({ activeSeason, onNavigate, onOpenPlayerBio, on
                 <div className="sidebar-column">
                     <div className="poll-card-box">
                         <h3>FAN POLL OF THE WEEK</h3>
-                        <p className="poll-question">Who will be the top scorer in the upcoming matchup vs Gold Lions?</p>
+                        <p className="poll-question">Who will be the top scorer in the upcoming matchup vs Kesslers Kingsmen?</p>
                         <div className="poll-options">
-                            <button className="poll-opt-btn" onClick={() => handlePollVote('Arjun Virmani')}>Arjun Virmani (#10)</button>
-                            <button className="poll-opt-btn" onClick={() => handlePollVote('Kevin Chen')}>Kevin Chen (#2)</button>
-                            <button className="poll-opt-btn" onClick={() => handlePollVote('Brendan Wong')}>Brendan Wong (#3)</button>
-                            <button className="poll-opt-btn" onClick={() => handlePollVote('Max Lee')}>Max Lee (#8)</button>
+                            {['Arjun Virmani', 'Kevin Chen', 'Brendan Wong', 'Max Lee'].map(opt => {
+                                const count = getVoteCount(opt);
+                                const total = getTotalVotes();
+                                const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                                const isMyVote = currentUser && pollVotes[currentUser.uid] === opt;
+                                
+                                return (
+                                    <button 
+                                        key={opt}
+                                        className={`poll-opt-btn ${hasVoted ? 'voted-mode' : ''} ${isMyVote ? 'my-pick' : ''}`}
+                                        onClick={() => !hasVoted && handlePollVote(opt)}
+                                        disabled={hasVoted}
+                                        style={{ position: 'relative', overflow: 'hidden', display: 'block', width: '100%', textAlign: 'left' }}
+                                    >
+                                        <span style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                                            <span>{opt} {isMyVote ? '✓' : ''}</span>
+                                            {hasVoted && <span>{pct}% ({count})</span>}
+                                        </span>
+                                        {hasVoted && (
+                                            <div style={{
+                                                position: 'absolute',
+                                                top: 0, left: 0, bottom: 0,
+                                                width: `${pct}%`,
+                                                background: 'var(--gold-accent)',
+                                                opacity: 0.2,
+                                                zIndex: 1
+                                            }} />
+                                        )}
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
 

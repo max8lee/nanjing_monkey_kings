@@ -1,5 +1,5 @@
 import React from 'react';
-import { DATA_ROSTER_SEASON1, DATA_ROSTER_SEASON2, PLAYER_GAME_LOGS, getPlayerSlug, calculatePlayerSeasonStats } from '../data/teamData';
+import { DATA_ROSTER_SEASON1, DATA_ROSTER_SEASON2, getPlayerSlug, calculatePlayerSeasonStats, formatDateTime } from '../data/teamData';
 import { ArrowLeft, Edit3, ShieldCheck, Crown } from 'lucide-react';
 
 export default function PlayerBioPage({ 
@@ -8,8 +8,11 @@ export default function PlayerBioPage({
     currentUser, 
     customPlayerBios = {}, 
     claimedPlayers = {},
+    seasonGames = [],
+    seasonLogs = [],
     onBack, 
-    onOpenEditModal 
+    onOpenEditModal,
+    onOpenGamePage
 }) {
     const rosterSource = activeSeason === 'season1' ? DATA_ROSTER_SEASON1 : DATA_ROSTER_SEASON2;
     const cleanQuery = (playerSlug || '').toString().toLowerCase();
@@ -20,7 +23,7 @@ export default function PlayerBioPage({
          || rosterSource[0];
 
     // Compute dynamic statistical averages directly from game logs!
-    const dynamicStats = calculatePlayerSeasonStats(basePlayer.id, activeSeason);
+    const dynamicStats = calculatePlayerSeasonStats(basePlayer.id, activeSeason, seasonLogs);
     
     let p = {
         ...basePlayer,
@@ -39,10 +42,13 @@ export default function PlayerBioPage({
     }
 
     const slug = getPlayerSlug(p.name);
-    const logs = (PLAYER_GAME_LOGS[p.id] || []).filter(log => {
-        if (activeSeason === 'season1') return log.gameId <= 6 && log.date && log.date.includes('2026') && (log.opp === 'buckets' || log.opp === "Adam Silvers' Hairstylist" || log.opp === 'Love Generation' || log.opp === "Drummond's Finger Roll" || log.opp === "Ja's Shooters" || log.opp === 'Clutch Time');
-        return true;
-    });
+    let logs = [];
+    
+    if (seasonLogs && seasonLogs.length > 0) {
+        logs = seasonLogs.filter(log => log.playerId === p.id);
+        // sort by gameId descending
+        logs.sort((a, b) => b.gameId - a.gameId);
+    }
 
     // Check ownership
     const isOwner = currentUser && (
@@ -147,15 +153,39 @@ export default function PlayerBioPage({
                                 logs.map((g, idx) => {
                                     const dReb = g.dreb !== undefined ? g.dreb : 0;
                                     const oReb = g.oreb !== undefined ? g.oreb : 0;
-                                    const totReb = g.reb !== undefined ? g.reb : (dReb + oReb);
+                                    const totReb = (dReb + oReb) > 0 ? (dReb + oReb) : (g.reb || 0);
+                                    
+                                    const relatedGame = seasonGames.find(sg => sg.gameId === g.gameId);
+                                    let gameResultText = '-';
+                                    let isWin = false;
+                                    let isLoss = false;
+                                    if (relatedGame && relatedGame.result) {
+                                        gameResultText = `${relatedGame.result} ${Math.max(relatedGame.finalTotal || 0, relatedGame.oppFinalTotal || 0)}-${Math.min(relatedGame.finalTotal || 0, relatedGame.oppFinalTotal || 0)}`;
+                                        isWin = relatedGame.result === 'W';
+                                        isLoss = relatedGame.result === 'L';
+                                    } else if (g.result) { // Fallback for hardcoded
+                                        gameResultText = g.result;
+                                        isWin = g.result.includes('W');
+                                        isLoss = g.result.includes('L');
+                                    }
+
                                     return (
-                                        <tr key={idx}>
+                                        <tr 
+                                            key={idx}
+                                            style={{ cursor: onOpenGamePage ? 'pointer' : 'default' }}
+                                            onClick={() => {
+                                                if (onOpenGamePage) {
+                                                    const gid = g.gameId || (idx + 1);
+                                                    onOpenGamePage(g.gameSlug || `game-${gid}`);
+                                                }
+                                            }}
+                                        >
                                             <td><strong>Game {g.gameId || (idx + 1)}</strong></td>
-                                            <td>{g.date}</td>
+                                            <td>{formatDateTime(g.date)}</td>
                                             <td>{g.opp}</td>
                                             <td>
-                                                <span className={`result-tag ${g.result.includes('W') ? 'win' : 'loss'}`}>
-                                                    {g.result}
+                                                <span className={`result-tag ${isWin ? 'win' : (isLoss ? 'loss' : '')}`}>
+                                                    {gameResultText}
                                                 </span>
                                             </td>
                                             <td><strong className="gold-text">{g.pts}</strong></td>

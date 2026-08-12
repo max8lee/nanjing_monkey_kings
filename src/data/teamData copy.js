@@ -56,18 +56,18 @@ export const DATA_STANDINGS_SEASON2 = [
 ];
 
 export const DATA_ROSTER_SEASON1 = [
-    { id: 'p7', firstName: 'Max', lastName: 'Lee', phone: '650-229-2021', name: 'Max Lee', nickname: 'MUDBONE', jersey: '#8', pos: 'Forward', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'4\"", weight: '195 lbs', college: 'Nanjing Tech', status: 'Season 1 Team Captain', img: '/assets/hero.jpg', bio: "Inaugural Season Team Captain. Led the Monkey Kings through all 6 games at Mission Dolores Academy, capping off the season with a 40-19 blowout win vs Adam Silvers' Hairstylist." },
-    { id: 'p1', firstName: 'Brendan', lastName: 'Wong', phone: '408-913-5986', name: 'Brendan Wong', nickname: 'BBOY', jersey: '#3', pos: 'Guard', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'1\"", weight: '180 lbs', college: 'UC Berkeley', status: 'Season 1 Core Member', img: '/assets/lin_wei.jpg', bio: 'Primary Season 1 ball-handler providing backcourt pace and defensive pressure.' },
-    { id: 'p2', firstName: 'Kevin', lastName: 'Chen', phone: '408-402-1626', name: 'Kevin Chen', nickname: 'MONKEV', jersey: '#2', pos: 'Guard', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'2\"", weight: '185 lbs', college: 'UCLA', status: 'Season 1 Core Member', img: '/assets/blakeney.jpg', bio: 'High-volume attack guard scoring double figures in Season 1 key games.' },
-    { id: 'p12', firstName: 'Thomas', lastName: 'Ngo', phone: '669-210-2726', name: 'Thomas Ngo', nickname: 'TOMKONG', jersey: '#7', pos: 'Guard', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "5'11\"", weight: '165 lbs', college: 'San Francisco', status: 'Season 1 Core Member', img: '/assets/blakeney.jpg', bio: 'Fast perimeter distributor anchoring the Season 1 backcourt rotation.' },
-    { id: 'p6', firstName: 'Kenneth', lastName: 'Liou', phone: '650-996-9315', name: 'Kenneth Liou', nickname: '习近平', jersey: '#4', pos: 'Forward/Center', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'7\"", weight: '215 lbs', college: 'UC Davis', status: 'Season 1 Core Member', img: '/assets/hero.jpg', bio: 'Season 1 primary paint presence pulling down 6.5 RPG at Mission Dolores Court.' },
-    { id: 'p5', firstName: 'Ethan', lastName: 'Hu', phone: '408-687-5545', name: 'Ethan Hu', nickname: 'HUNOBO', jersey: '#1', pos: 'Forward', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'5\"", weight: '200 lbs', college: 'UC San Diego', status: 'Season 1 Full Field Member', img: '/assets/hero.jpg', bio: 'Wing defender and transition runner in the Season 1 full field lineup.' },
-    { id: 'p17', firstName: 'Stephen', lastName: 'Zhong', phone: '669-204-3130', name: 'Stephen Zhong', nickname: '', jersey: '#9', pos: 'Forward', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'4\"", weight: '190 lbs', college: 'UC Santa Cruz', status: 'Season 1 Full Field Member', img: '/assets/hero.jpg', bio: 'Season 1 wing forward providing perimeter size and fast-break finishes.' },
-    { id: 'p8', firstName: 'Xuanyi', lastName: 'Wang', phone: '650-996-6184', name: 'Xuanyi Wang', nickname: 'LeApe', jersey: '#23', pos: 'Guard', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'1\"", weight: '175 lbs', college: 'NYU', status: 'Season 1 Full Field Member', img: '/assets/blakeney.jpg', bio: 'Season 1 3-and-D wing playing key minutes across all 6 Mission Dolores games.' },
-    { id: 'p3', firstName: 'Arjun', lastName: 'Virmani', phone: '650-656-3779', name: 'Arjun Virmani', nickname: '', jersey: '#10', pos: 'Guard', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'3\"", weight: '185 lbs', college: 'Stanford', status: 'Season 1 Full Field Member', img: '/assets/lin_wei.jpg', bio: 'Perimeter threat anchoring the Season 1 full field rotation.' },
-    { id: 'p11', firstName: 'Markus', lastName: 'Wong', phone: '408-666-1242', name: 'Markus Wong', nickname: 'TITANIC', jersey: '#34', pos: 'Guard', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'0\"", weight: '170 lbs', college: 'UC Irvine', status: 'Season 1 Recommended Member', img: '/assets/lin_wei.jpg', bio: 'Season 1 backcourt reserve providing energy and bench defense.' },
-    { id: 'p4', firstName: 'Sidharth', lastName: 'Dudyala', phone: '408-500-2714', name: 'Sidharth Dudyala', nickname: 'APE', jersey: '#35', pos: 'Center', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'9\"", weight: '235 lbs', college: 'USC', status: 'Season 1 Recommended Member', img: '/assets/logo.webp', bio: 'Season 1 paint protector and glass cleaner at Mission Dolores Court.' },
-    { id: 'p9', firstName: 'Yash', lastName: 'Sharma', phone: '925-364-1944', name: 'Yash Sharma', nickname: 'Smoove', jersey: '#0', pos: 'Forward', ppg: 'N/A', rpg: 'N/A', apg: 'N/A', fgPct: 'N/A', p3Pct: 'N/A', ftPct: 'N/A', height: "6'6\"", weight: '205 lbs', college: 'San Jose State', status: 'Season 1 Recommended Member', img: '/assets/hero.jpg', bio: 'Season 1 wing forward providing efficient interior scoring.' }
+    { id: 'p7', firstName: 'Max', lastName: 'Lee', phone: '650-229-2021', name: 'Max Lee', nickname: 'MUDBONE', jersey: '#8', pos: 'Forward', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '38.0%', p3Pct: '28.0%', ftPct: '60.0%', height: "6'4\"", weight: '195 lbs', college: 'Nanjing Tech', status: 'Season 1 Team Captain', img: '/assets/hero.jpg', bio: "Inaugural Season Team Captain. Led the Monkey Kings through all 6 games at Mission Dolores Academy, capping off the season with a 40-19 blowout win vs Adam Silvers' Hairstylist." },
+    { id: 'p1', firstName: 'Brendan', lastName: 'Wong', phone: '408-913-5986', name: 'Brendan Wong', nickname: 'BBOY', jersey: '#3', pos: 'Guard', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '36.5%', p3Pct: '30.0%', ftPct: '50.0%', height: "6'1\"", weight: '180 lbs', college: 'UC Berkeley', status: 'Season 1 Core Member', img: '/assets/lin_wei.jpg', bio: 'Primary Season 1 ball-handler providing backcourt pace and defensive pressure.' },
+    { id: 'p2', firstName: 'Kevin', lastName: 'Chen', phone: '408-402-1626', name: 'Kevin Chen', nickname: 'MONKEV', jersey: '#2', pos: 'Guard', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '35.0%', p3Pct: '25.0%', ftPct: '45.0%', height: "6'2\"", weight: '185 lbs', college: 'UCLA', status: 'Season 1 Core Member', img: '/assets/blakeney.jpg', bio: 'High-volume attack guard scoring double figures in Season 1 key games.' },
+    { id: 'p12', firstName: 'Thomas', lastName: 'Ngo', phone: '669-210-2726', name: 'Thomas Ngo', nickname: 'TOMKONG', jersey: '#7', pos: 'Guard', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '28.0%', p3Pct: '22.0%', ftPct: '0.0%', height: "5'11\"", weight: '165 lbs', college: 'San Francisco', status: 'Season 1 Core Member', img: '/assets/blakeney.jpg', bio: 'Fast perimeter distributor anchoring the Season 1 backcourt rotation.' },
+    { id: 'p6', firstName: 'Kenneth', lastName: 'Liou', phone: '650-996-9315', name: 'Kenneth Liou', nickname: '习近平', jersey: '#4', pos: 'Forward/Center', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '40.0%', p3Pct: '0.0%', ftPct: '50.0%', height: "6'7\"", weight: '215 lbs', college: 'UC Davis', status: 'Season 1 Core Member', img: '/assets/hero.jpg', bio: 'Season 1 primary paint presence pulling down 6.5 RPG at Mission Dolores Court.' },
+    { id: 'p5', firstName: 'Ethan', lastName: 'Hu', phone: '408-687-5545', name: 'Ethan Hu', nickname: 'HUNOBO', jersey: '#1', pos: 'Forward', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '22.0%', p3Pct: '15.0%', ftPct: '50.0%', height: "6'5\"", weight: '200 lbs', college: 'UC San Diego', status: 'Season 1 Full Field Member', img: '/assets/hero.jpg', bio: 'Wing defender and transition runner in the Season 1 full field lineup.' },
+    { id: 'p17', firstName: 'Stephen', lastName: 'Zhong', phone: '669-204-3130', name: 'Stephen Zhong', nickname: '', jersey: '#9', pos: 'Forward', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '33.0%', p3Pct: '20.0%', ftPct: '0.0%', height: "6'4\"", weight: '190 lbs', college: 'UC Santa Cruz', status: 'Season 1 Full Field Member', img: '/assets/hero.jpg', bio: 'Season 1 wing forward providing perimeter size and fast-break finishes.' },
+    { id: 'p8', firstName: 'Xuanyi', lastName: 'Wang', phone: '650-996-6184', name: 'Xuanyi Wang', nickname: 'LeApe', jersey: '#23', pos: 'Guard', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '35.0%', p3Pct: '28.0%', ftPct: '0.0%', height: "6'1\"", weight: '175 lbs', college: 'NYU', status: 'Season 1 Full Field Member', img: '/assets/blakeney.jpg', bio: 'Season 1 3-and-D wing playing key minutes across all 6 Mission Dolores games.' },
+    { id: 'p3', firstName: 'Arjun', lastName: 'Virmani', phone: '650-656-3779', name: 'Arjun Virmani', nickname: '', jersey: '#10', pos: 'Guard', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '32.0%', p3Pct: '24.0%', ftPct: '80.0%', height: "6'3\"", weight: '185 lbs', college: 'Stanford', status: 'Season 1 Full Field Member', img: '/assets/lin_wei.jpg', bio: 'Perimeter threat anchoring the Season 1 full field rotation.' },
+    { id: 'p11', firstName: 'Markus', lastName: 'Wong', phone: '408-666-1242', name: 'Markus Wong', nickname: 'TITANIC', jersey: '#34', pos: 'Guard', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '20.0%', p3Pct: '0.0%', ftPct: '0.0%', height: "6'0\"", weight: '170 lbs', college: 'UC Irvine', status: 'Season 1 Recommended Member', img: '/assets/lin_wei.jpg', bio: 'Season 1 backcourt reserve providing energy and bench defense.' },
+    { id: 'p4', firstName: 'Sidharth', lastName: 'Dudyala', phone: '408-500-2714', name: 'Sidharth Dudyala', nickname: 'APE', jersey: '#35', pos: 'Center', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '38.0%', p3Pct: '0.0%', ftPct: '40.0%', height: "6'9\"", weight: '235 lbs', college: 'USC', status: 'Season 1 Recommended Member', img: '/assets/logo.webp', bio: 'Season 1 paint protector and glass cleaner at Mission Dolores Court.' },
+    { id: 'p9', firstName: 'Yash', lastName: 'Sharma', phone: '925-364-1944', name: 'Yash Sharma', nickname: 'Smoove', jersey: '#0', pos: 'Forward', ppg: 0.0, rpg: 0.0, apg: 0.0, fgPct: '40.0%', p3Pct: '0.0%', ftPct: '0.0%', height: "6'6\"", weight: '205 lbs', college: 'San Jose State', status: 'Season 1 Recommended Member', img: '/assets/hero.jpg', bio: 'Season 1 wing forward providing efficient interior scoring.' }
 ];
 
 export const DATA_SCHEDULE_SEASON1 = [
@@ -93,6 +93,80 @@ export const DATA_STANDINGS_SEASON1 = [
     { rk: 8, team: "Adam Silvers' Hairstylists", w: 0, l: 6, pct: '.000', gb: '7.0', home: '0-3', away: '0-3', strk: 'L6', l10: '0-6' }
 ];
 
+export const PLAYER_GAME_LOGS = {
+    'p16': [
+        { gameId: 4, date: '08/10/2026', opp: 'Beast Burgers', result: 'L 37-40', pts: 18, fgm: 7, fga: 19, p3m: 3, p3a: 13, ftm: 1, fta: 2, dreb: 3, oreb: 0, reb: 3, ast: 0, stl: 3, blk: 2, to: 1 }
+    ],
+    'p18': [
+        { gameId: 4, date: '08/10/2026', opp: 'Beast Burgers', result: 'L 37-40', pts: 8, fgm: 3, fga: 13, p3m: 0, p3a: 2, ftm: 2, fta: 4, dreb: 8, oreb: 1, reb: 9, ast: 2, stl: 1, blk: 1, to: 3 }
+    ],
+    'p1': [
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 11, fgm: 5, fga: 17, p3m: 0, p3a: 6, ftm: 1, fta: 5, dreb: 4, oreb: 0, reb: 4, ast: 3, stl: 1, blk: 0, to: 3 },
+        { gameId: 4, date: '08/10/2026', opp: 'Beast Burgers', result: 'L 37-40', pts: 2, fgm: 0, fga: 13, p3m: 0, p3a: 10, ftm: 2, fta: 3, dreb: 2, oreb: 0, reb: 2, ast: 0, stl: 0, blk: 0, to: 0 }
+    ],
+    'p2': [
+        { gameId: 1, date: '07/20/2026', opp: 'Beast Burgers', result: 'L 31-67', pts: 15, fgm: 6, fga: 12, p3m: 1, p3a: 2, ftm: 2, fta: 8, dreb: 6, oreb: 0, reb: 6, ast: 1, stl: 1, blk: 0, to: 2 },
+        { gameId: 2, date: '07/27/2026', opp: 'Kesslers Kings', result: 'L 33-38', pts: 7, fgm: 2, fga: 6, p3m: 0, p3a: 3, ftm: 3, fta: 13, dreb: 4, oreb: 1, reb: 5, ast: 2, stl: 2, blk: 0, to: 3 },
+        { gameId: 4, date: '08/10/2026', opp: 'Beast Burgers', result: 'L 37-40', pts: 4, fgm: 2, fga: 4, p3m: 0, p3a: 1, ftm: 0, fta: 0, dreb: 7, oreb: 1, reb: 8, ast: 1, stl: 3, blk: 0, to: 4 }
+    ],
+    'p3': [
+        { gameId: 1, date: '07/20/2026', opp: 'Beast Burgers', result: 'L 31-67', pts: 11, fgm: 4, fga: 19, p3m: 0, p3a: 10, ftm: 3, fta: 3, dreb: 4, oreb: 0, reb: 4, ast: 1, stl: 1, blk: 0, to: 1 },
+        { gameId: 2, date: '07/27/2026', opp: 'Kesslers Kings', result: 'L 33-38', pts: 11, fgm: 4, fga: 21, p3m: 3, p3a: 12, ftm: 0, fta: 0, dreb: 1, oreb: 0, reb: 1, ast: 1, stl: 3, blk: 0, to: 4 },
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 18, fgm: 6, fga: 12, p3m: 4, p3a: 6, ftm: 2, fta: 2, dreb: 4, oreb: 1, reb: 5, ast: 1, stl: 0, blk: 1, to: 3 }
+    ],
+    'p4': [
+        { gameId: 2, date: '07/27/2026', opp: 'Kesslers Kings', result: 'L 33-38', pts: 4, fgm: 2, fga: 5, p3m: 0, p3a: 1, ftm: 0, fta: 0, dreb: 6, oreb: 3, reb: 9, ast: 0, stl: 3, blk: 2, to: 2 },
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 3, fgm: 1, fga: 3, p3m: 0, p3a: 0, ftm: 1, fta: 2, dreb: 4, oreb: 3, reb: 7, ast: 0, stl: 3, blk: 4, to: 6 },
+        { gameId: 4, date: '08/10/2026', opp: 'Beast Burgers', result: 'L 37-40', pts: 0, fgm: 0, fga: 0, p3m: 0, p3a: 0, ftm: 0, fta: 0, dreb: 4, oreb: 5, reb: 9, ast: 1, stl: 0, blk: 0, to: 1 }
+    ],
+    'p5': [
+        { gameId: 1, date: '07/20/2026', opp: 'Beast Burgers', result: 'L 31-67', pts: 0, fgm: 0, fga: 5, p3m: 0, p3a: 4, ftm: 0, fta: 0, dreb: 2, oreb: 0, reb: 2, ast: 0, stl: 0, blk: 0, to: 1 },
+        { gameId: 2, date: '07/27/2026', opp: 'Kesslers Kings', result: 'L 33-38', pts: 4, fgm: 1, fga: 8, p3m: 1, p3a: 6, ftm: 1, fta: 2, dreb: 3, oreb: 3, reb: 6, ast: 1, stl: 0, blk: 0, to: 0 },
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 0, fgm: 0, fga: 1, p3m: 0, p3a: 1, ftm: 0, fta: 0, dreb: 3, oreb: 0, reb: 3, ast: 0, stl: 0, blk: 0, to: 3 },
+        { gameId: 4, date: '08/10/2026', opp: 'Beast Burgers', result: 'L 37-40', pts: 2, fgm: 1, fga: 4, p3m: 0, p3a: 2, ftm: 0, fta: 0, dreb: 2, oreb: 1, reb: 3, ast: 0, stl: 0, blk: 0, to: 1 }
+    ],
+    'p6': [
+        { gameId: 1, date: '07/20/2026', opp: 'Beast Burgers', result: 'L 31-67', pts: 0, fgm: 0, fga: 4, p3m: 0, p3a: 1, ftm: 0, fta: 0, dreb: 5, oreb: 1, reb: 6, ast: 0, stl: 1, blk: 0, to: 0 },
+        { gameId: 2, date: '07/27/2026', opp: 'Kesslers Kings', result: 'L 33-38', pts: 4, fgm: 1, fga: 1, p3m: 0, p3a: 0, ftm: 2, fta: 3, dreb: 3, oreb: 5, reb: 8, ast: 2, stl: 2, blk: 0, to: 1 }
+    ],
+    'p7': [
+        { gameId: 1, date: '07/20/2026', opp: 'Beast Burgers', result: 'L 31-67', pts: 0, fgm: 0, fga: 7, p3m: 0, p3a: 7, ftm: 0, fta: 0, dreb: 2, oreb: 1, reb: 3, ast: 0, stl: 0, blk: 0, to: 0 },
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 0, fgm: 0, fga: 4, p3m: 0, p3a: 3, ftm: 0, fta: 0, dreb: 3, oreb: 2, reb: 5, ast: 1, stl: 1, blk: 0, to: 2 },
+        { gameId: 4, date: '08/10/2026', opp: 'Beast Burgers', result: 'L 37-40', pts: 0, fgm: 0, fga: 1, p3m: 0, p3a: 0, ftm: 0, fta: 0, dreb: 1, oreb: 0, reb: 1, ast: 0, stl: 0, blk: 0, to: 0 }
+    ],
+    'p8': [
+        { gameId: 1, date: '07/20/2026', opp: 'Beast Burgers', result: 'L 31-67', pts: 5, fgm: 2, fga: 4, p3m: 1, p3a: 3, ftm: 0, fta: 0, dreb: 4, oreb: 1, reb: 5, ast: 0, stl: 1, blk: 0, to: 0 },
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 0, fgm: 0, fga: 1, p3m: 0, p3a: 0, ftm: 0, fta: 0, dreb: 0, oreb: 0, reb: 0, ast: 0, stl: 0, blk: 0, to: 0 },
+        { gameId: 4, date: '08/10/2026', opp: 'Beast Burgers', result: 'L 37-40', pts: 3, fgm: 1, fga: 4, p3m: 1, p3a: 2, ftm: 0, fta: 0, dreb: 2, oreb: 0, reb: 2, ast: 0, stl: 0, blk: 0, to: 0 }
+    ],
+    'p9': [
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 6, fgm: 3, fga: 5, p3m: 0, p3a: 0, ftm: 0, fta: 0, dreb: 1, oreb: 0, reb: 1, ast: 0, stl: 1, blk: 1, to: 0 },
+        { gameId: 4, date: '08/10/2026', opp: 'Beast Burgers', result: 'L 37-40', pts: 0, fgm: 0, fga: 2, p3m: 0, p3a: 0, ftm: 0, fta: 0, dreb: 2, oreb: 0, reb: 2, ast: 0, stl: 0, blk: 0, to: 1 }
+    ],
+    'p10': [
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 3, fgm: 1, fga: 5, p3m: 0, p3a: 1, ftm: 1, fta: 3, dreb: 9, oreb: 3, reb: 12, ast: 1, stl: 0, blk: 0, to: 1 },
+        { gameId: 4, date: '08/10/2026', opp: 'Beast Burgers', result: 'L 37-40', pts: 0, fgm: 0, fga: 2, p3m: 0, p3a: 1, ftm: 0, fta: 0, dreb: 2, oreb: 1, reb: 3, ast: 0, stl: 1, blk: 0, to: 0 }
+    ],
+    'p11': [
+        { gameId: 1, date: '07/20/2026', opp: 'Beast Burgers', result: 'L 31-67', pts: 0, fgm: 0, fga: 2, p3m: 0, p3a: 0, ftm: 0, fta: 0, dreb: 0, oreb: 0, reb: 0, stl: 0, blk: 0, to: 0 },
+        { gameId: 2, date: '07/27/2026', opp: 'Kesslers Kings', result: 'L 33-38', pts: 0, fgm: 0, fga: 0, p3m: 0, p3a: 0, ftm: 0, fta: 0, dreb: 0, oreb: 0, reb: 0, ast: 0, stl: 0, blk: 0, to: 0 },
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 0, fgm: 0, fga: 0, p3m: 0, p3a: 0, ftm: 0, fta: 0, dreb: 0, oreb: 0, reb: 0, ast: 0, stl: 0, blk: 0, to: 1 }
+    ],
+    'p12': [
+        { gameId: 1, date: '07/20/2026', opp: 'Beast Burgers', result: 'L 31-67', pts: 0, fgm: 0, fga: 3, p3m: 0, p3a: 3, ftm: 0, fta: 0, dreb: 1, oreb: 0, reb: 1, ast: 0, stl: 0, blk: 0, to: 0 },
+        { gameId: 2, date: '07/27/2026', opp: 'Kesslers Kings', result: 'L 33-38', pts: 3, fgm: 1, fga: 3, p3m: 1, p3a: 1, ftm: 0, fta: 0, dreb: 0, oreb: 1, reb: 1, ast: 1, stl: 0, blk: 0, to: 0 },
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 0, fgm: 0, fga: 4, p3m: 0, p3a: 2, ftm: 0, fta: 0, dreb: 0, oreb: 1, reb: 1, ast: 0, stl: 0, blk: 0, to: 0 }
+    ],
+    'p13': [
+        { gameId: 2, date: '07/27/2026', opp: 'Kesslers Kings', result: 'L 33-38', pts: 0, fgm: 0, fga: 2, p3m: 0, p3a: 1, ftm: 0, fta: 0, dreb: 2, oreb: 0, reb: 2, ast: 0, stl: 1, blk: 0, to: 0 },
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 0, fgm: 0, fga: 2, p3m: 0, p3a: 1, ftm: 0, fta: 0, dreb: 4, oreb: 0, reb: 4, ast: 0, stl: 0, blk: 0, to: 1 }
+    ],
+    'p14': [
+        { gameId: 2, date: '07/27/2026', opp: 'Kesslers Kings', result: 'L 33-38', pts: 0, fgm: 0, fga: 1, p3m: 0, p3a: 1, ftm: 0, fta: 0, dreb: 0, oreb: 0, reb: 0, ast: 0, stl: 0, blk: 0, to: 0 },
+        { gameId: 3, date: '08/03/2026', opp: 'Hoopers', result: 'W 41-38', pts: 0, fgm: 0, fga: 1, p3m: 0, p3a: 1, ftm: 0, fta: 0, dreb: 1, oreb: 1, reb: 1, ast: 0, stl: 0, blk: 0, to: 0 }
+    ]
+};
+
 export const DATA_FILM = [
     { id: 'f1', title: 'Edwin Gao 18-Point Outburst (3 3PM, 3 STL) vs Beast Burgers', duration: '04:15', views: '5.1K views', img: '/assets/blakeney.jpg', video: 'assets/film/IMG_6165.mp4' },
     { id: 'f2', title: 'Arjun Virmani 18-Point Outburst (4 3PM) vs Hoopers', duration: '03:45', views: '4.2K views', img: '/assets/lin_wei.jpg', video: 'assets/film/IMG_0841.mp4' },
@@ -112,65 +186,41 @@ export function getPlayerSlug(name) {
     return name.replace(/\s*\([^)]*\)/g, '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
-export function formatDateTime(dateObj) {
-    if (!dateObj) return '';
-    if (typeof dateObj === 'string') return dateObj;
-
-    // Handle Firebase Timestamp or JS Date
-    const d = dateObj.toDate ? dateObj.toDate() : new Date(dateObj);
-    if (isNaN(d.getTime())) return '';
-
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const month = months[d.getMonth()];
-    const day = d.getDate().toString().padStart(2, '0');
-    
-    const hours = d.getHours().toString().padStart(2, '0');
-    const minutes = d.getMinutes().toString().padStart(2, '0');
-    
-    return `${month} ${day} • ${hours}:${minutes}`;
-}
-
 // DYNAMIC STATISTICAL CALCULATOR ENGINE FROM GAME LOGS
-export function calculatePlayerSeasonStats(playerId, activeSeason = 'season2', seasonLogs = []) {
-    let pLogs = [];
-    if (seasonLogs && seasonLogs.length > 0) {
-        pLogs = seasonLogs.filter(log => log.playerId === playerId);
-    }
+export function calculatePlayerSeasonStats(playerId, activeSeason = 'season2') {
+    const rawLogs = PLAYER_GAME_LOGS[playerId] || [];
+    
+    // Filter game logs for the target season
+    const pLogs = rawLogs.filter(log => {
+        if (activeSeason === 'season1') return log.gameId <= 6 && log.date && log.date.includes('2026') && (log.opp === 'buckets' || log.opp === "Adam Silvers' Hairstylist" || log.opp === 'Love Generation' || log.opp === "Drummond's Finger Roll" || log.opp === "Ja's Shooters" || log.opp === 'Clutch Time');
+        return true;
+    });
 
     if (!pLogs || pLogs.length === 0) {
         return {
             gp: 0,
             ppg: 0.0,
             rpg: 0.0,
-            orpg: 0.0,
-            drpg: 0.0,
             apg: 0.0,
             spg: 0.0,
             bpg: 0.0,
-            topg: 0.0,
             fgPct: '0.0%',
             p3Pct: '0.0%',
             ftPct: '0.0%',
-            fgm: 0, fga: 0, p3m: 0, p3a: 0, ftm: 0, fta: 0, reb: 0, pts: 0, to: 0
+            fgm: 0, fga: 0, p3m: 0, p3a: 0, ftm: 0, fta: 0, reb: 0, pts: 0
         };
     }
 
     const gp = pLogs.length;
-    let totalPts = 0, totalReb = 0, totalAst = 0, totalStl = 0, totalBlk = 0, totalTo = 0;
-    let totalOreb = 0, totalDreb = 0;
+    let totalPts = 0, totalReb = 0, totalAst = 0, totalStl = 0, totalBlk = 0;
     let totalFgm = 0, totalFga = 0, totalP3m = 0, totalP3a = 0, totalFtm = 0, totalFta = 0;
 
     pLogs.forEach(log => {
         totalPts += (log.pts || 0);
-        const logDreb = log.dreb || 0;
-        const logOreb = log.oreb || 0;
-        totalDreb += logDreb;
-        totalOreb += logOreb;
-        totalReb += (logDreb + logOreb) > 0 ? (logDreb + logOreb) : (log.reb || 0);
+        totalReb += (log.reb !== undefined ? log.reb : ((log.dreb || 0) + (log.oreb || 0)));
         totalAst += (log.ast || 0);
         totalStl += (log.stl || 0);
         totalBlk += (log.blk || 0);
-        totalTo += (log.to || 0);
 
         totalFgm += (log.fgm || 0);
         totalFga += (log.fga || 0);
@@ -182,12 +232,9 @@ export function calculatePlayerSeasonStats(playerId, activeSeason = 'season2', s
 
     const ppg = parseFloat((totalPts / gp).toFixed(1));
     const rpg = parseFloat((totalReb / gp).toFixed(1));
-    const orpg = parseFloat((totalOreb / gp).toFixed(1));
-    const drpg = parseFloat((totalDreb / gp).toFixed(1));
     const apg = parseFloat((totalAst / gp).toFixed(1));
     const spg = parseFloat((totalStl / gp).toFixed(1));
     const bpg = parseFloat((totalBlk / gp).toFixed(1));
-    const topg = parseFloat((totalTo / gp).toFixed(1));
 
     const fgPct = totalFga > 0 ? ((totalFgm / totalFga) * 100).toFixed(1) + '%' : '0.0%';
     const p3Pct = totalP3a > 0 ? ((totalP3m / totalP3a) * 100).toFixed(1) + '%' : '0.0%';
@@ -197,12 +244,9 @@ export function calculatePlayerSeasonStats(playerId, activeSeason = 'season2', s
         gp,
         ppg,
         rpg,
-        orpg,
-        drpg,
         apg,
         spg,
         bpg,
-        topg,
         fgPct,
         p3Pct,
         ftPct,
@@ -218,33 +262,26 @@ export function calculatePlayerSeasonStats(playerId, activeSeason = 'season2', s
 }
 
 // CENTRAL UNIFIED MERGED ROSTER GETTER (MERGES DYNAMIC CALCULATED STATS & USER CUSTOMIZATIONS)
-export function getMergedRoster(activeSeason = 'season2', customPlayerBios = {}, season2Logs = []) {
-    const rosterSource = activeSeason === 'season1' ? DATA_ROSTER_SEASON1 : DATA_ROSTER_SEASON2;
-    
-    return rosterSource.map(basePlayer => {
-        const computed = calculatePlayerSeasonStats(basePlayer.id, activeSeason, season2Logs);
+export function getMergedRoster(activeSeason = 'season2', customPlayerBios = {}) {
+    const sourceData = activeSeason === 'season1' ? DATA_ROSTER_SEASON1 : DATA_ROSTER_SEASON2;
+    return sourceData.map(player => {
+        const computed = calculatePlayerSeasonStats(player.id, activeSeason);
         
-        let mergedPlayer = { ...basePlayer };
+        let mergedPlayer = { ...player };
         if (computed && computed.gp > 0) {
             mergedPlayer = {
                 ...mergedPlayer,
-                gp: computed.gp,
                 ppg: computed.ppg,
                 rpg: computed.rpg,
-                orpg: computed.orpg,
-                drpg: computed.drpg,
                 apg: computed.apg,
-                spg: computed.spg,
-                bpg: computed.bpg,
-                topg: computed.topg,
                 fgPct: computed.fgPct,
                 p3Pct: computed.p3Pct,
                 ftPct: computed.ftPct
             };
         }
 
-        if (customPlayerBios[basePlayer.id]) {
-            const { ppg, rpg, orpg, drpg, apg, fgPct, p3Pct, ftPct, topg, ...customOverrides } = customPlayerBios[basePlayer.id];
+        if (customPlayerBios[player.id]) {
+            const { ppg, rpg, apg, fgPct, p3Pct, ftPct, ...customOverrides } = customPlayerBios[player.id];
             mergedPlayer = { ...mergedPlayer, ...customOverrides };
         }
 
