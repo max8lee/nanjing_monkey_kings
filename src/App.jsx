@@ -24,6 +24,7 @@ import HomePage from './pages/HomePage';
 import SchedulePage from './pages/SchedulePage';
 import RosterPage from './pages/RosterPage';
 import StatsPage from './pages/StatsPage';
+import TeamStatsPage from './pages/TeamStatsPage';
 import StandingsPage from './pages/StandingsPage';
 import FilmPage from './pages/FilmPage';
 import PlayerPropsPage from './pages/PlayerPropsPage';
@@ -289,6 +290,9 @@ export default function App() {
                         seasonLogs={seasonLogs}
                         onOpenPlayerBio={handleOpenPlayerBio} 
                     />
+                )}
+                {activeTab === 'team-stats' && (
+                    <TeamStatsPage activeSeason={activeSeason} />
                 )}
                 {activeTab === 'standings' && (
                     <StandingsPage activeSeason={activeSeason} />
