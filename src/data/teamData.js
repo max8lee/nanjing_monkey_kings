@@ -101,10 +101,10 @@ export const DATA_FILM = [
 ];
 
 export const DATA_PROPS = [
-    { id: 'pr1', player: 'Edwin Gao', stat: 'Points Scored', line: '16.5', matchup: 'vs Kesslers Kingsman' },
-    { id: 'pr2', player: 'Arjun Virmani', stat: 'Points Scored', line: '14.5', matchup: 'vs Kesslers Kingsman' },
-    { id: 'pr3', player: 'David Cooke', stat: 'Total Rebounds', line: '8.5', matchup: 'vs Kesslers Kingsman' },
-    { id: 'pr4', player: 'Kevin Chen', stat: 'Points + Rebounds', line: '14.5', matchup: 'vs Kesslers Kingsman' }
+    { id: 'pr1', player: 'Max Lee', stat: 'Points Scored', line: '1.5', matchup: 'vs Kesslers Kingsman' },
+    { id: 'pr2', player: 'Sidharth Dudyala', stat: 'Offensive Rebounds', line: '3.5', matchup: 'vs Kesslers Kingsman' },
+    { id: 'pr3', player: 'Brendan Wong', stat: 'Field Goal (%)', line: '30', matchup: 'vs Kesslers Kingsman' },
+    { id: 'pr4', player: 'Kevin Chen', stat: 'Free Throw (%)', line: '25', matchup: 'vs Kesslers Kingsman' }
 ];
 
 export function getPlayerSlug(name) {

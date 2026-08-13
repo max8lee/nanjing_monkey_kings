@@ -215,9 +215,13 @@ export async function adminSettleParlays() {
             let actual = 0;
             if (leg.stat === 'Points Scored') actual = latestLog.pts || 0;
             else if (leg.stat === 'Total Rebounds') actual = (latestLog.oreb || 0) + (latestLog.dreb || 0) || (latestLog.reb || 0);
+            else if (leg.stat === 'Offensive Rebounds') actual = (latestLog.oreb || 0);
             else if (leg.stat === 'Points + Rebounds') actual = (latestLog.pts || 0) + ((latestLog.oreb || 0) + (latestLog.dreb || 0) || (latestLog.reb || 0));
             else if (leg.stat === 'Assists') actual = latestLog.ast || 0;
             else if (leg.stat === '3-Pointers Made') actual = latestLog.p3m || 0;
+            else if (leg.stat === 'Free Throw (%)') actual = parseFloat(atestLog.ftPct) || 0;
+            else if (leg.stat === 'Field Goal (%)') actual = parseFloat(atestLog.fgPct) || 0;
+
 
             const lineNum = parseFloat(leg.line);
             let legStatus = 'OPEN';

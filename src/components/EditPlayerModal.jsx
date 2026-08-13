@@ -4,7 +4,8 @@ import { X, Save, Sparkles, UploadCloud, Image as ImageIcon, Trash2 } from 'luci
 export default function EditPlayerModal({ isOpen, player, onClose, onSave }) {
     const [nickname, setNickname] = useState('');
     const [pos, setPos] = useState('');
-    const [height, setHeight] = useState('');
+    const [heightFeet, setHeightFeet] = useState('6');
+    const [heightInches, setHeightInches] = useState('0');
     const [weight, setWeight] = useState('');
     const [college, setCollege] = useState('');
     const [bio, setBio] = useState('');
@@ -17,8 +18,27 @@ export default function EditPlayerModal({ isOpen, player, onClose, onSave }) {
         if (player) {
             setNickname(player.nickname || '');
             setPos(player.pos || 'Guard');
-            setHeight(player.height || '');
-            setWeight(player.weight || '');
+            
+            if (player.height) {
+                const parts = player.height.split("'");
+                if (parts.length === 2) {
+                    setHeightFeet(parts[0]);
+                    setHeightInches(parts[1].replace('"', ''));
+                } else {
+                    setHeightFeet('6');
+                    setHeightInches('0');
+                }
+            } else {
+                setHeightFeet('6');
+                setHeightInches('0');
+            }
+            
+            if (player.weight) {
+                setWeight(player.weight.toString().replace(/[^0-9]/g, ''));
+            } else {
+                setWeight('');
+            }
+            
             setCollege(player.college || '');
             setBio(player.bio || '');
             setImg(player.img || '');
@@ -106,16 +126,17 @@ export default function EditPlayerModal({ isOpen, player, onClose, onSave }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSave({
-            id: player.id,
+        const updatedPlayer = {
+            ...player,
             nickname,
             pos,
-            height,
-            weight,
+            height: `${heightFeet}'${heightInches}"`,
+            weight: weight ? `${weight} lbs` : '',
             college,
             bio,
             img
-        });
+        };
+        onSave(updatedPlayer);
         onClose();
     };
 
@@ -159,18 +180,32 @@ export default function EditPlayerModal({ isOpen, player, onClose, onSave }) {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
                         <div className="form-group">
                             <label>Height</label>
-                            <input
-                                type="text"
-                                placeholder="6'4&quot;"
-                                value={height}
-                                onChange={(e) => setHeight(e.target.value)}
-                            />
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <select 
+                                    value={heightFeet} 
+                                    onChange={(e) => setHeightFeet(e.target.value)}
+                                    style={{ flex: 1 }}
+                                >
+                                    {['4', '5', '6', '7'].map(f => (
+                                        <option key={f} value={f}>{f}'</option>
+                                    ))}
+                                </select>
+                                <select 
+                                    value={heightInches} 
+                                    onChange={(e) => setHeightInches(e.target.value)}
+                                    style={{ flex: 1 }}
+                                >
+                                    {[0,1,2,3,4,5,6,7,8,9,10,11].map(i => (
+                                        <option key={i} value={i}>{i}"</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                         <div className="form-group">
-                            <label>Weight</label>
+                            <label>Weight (lbs)</label>
                             <input
-                                type="text"
-                                placeholder="195 lbs"
+                                type="number"
+                                placeholder="195"
                                 value={weight}
                                 onChange={(e) => setWeight(e.target.value)}
                             />
