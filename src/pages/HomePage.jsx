@@ -263,12 +263,12 @@ export default function HomePage({ activeSeason, seasonGames, seasonLogs, onNavi
                                 const isMyVote = currentUser && pollVotes[currentUser.uid] === opt;
                                 
                                 return (
-                                    <button 
+                                    <button
                                         key={opt}
                                         className={`poll-opt-btn ${hasVoted ? 'voted-mode' : ''} ${isMyVote ? 'my-pick' : ''}`}
-                                        onClick={() => !hasVoted && handlePollVote(opt)}
-                                        disabled={hasVoted}
-                                        style={{ position: 'relative', overflow: 'hidden', display: 'block', width: '100%', textAlign: 'left' }}
+                                        onClick={() => !isMyVote && handlePollVote(opt)}
+                                        disabled={isMyVote}
+                                        style={{ position: 'relative', overflow: 'hidden', display: 'block', width: '100%', textAlign: 'left', cursor: isMyVote ? 'default' : 'pointer' }}
                                     >
                                         <span style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                             <span>{opt} {isMyVote ? '✓' : ''}</span>
