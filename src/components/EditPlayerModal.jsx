@@ -3,6 +3,7 @@ import { X, Save, Sparkles, UploadCloud, Image as ImageIcon, Trash2 } from 'luci
 
 export default function EditPlayerModal({ isOpen, player, onClose, onSave }) {
     const [nickname, setNickname] = useState('');
+    const [jersey, setJersey] = useState('');
     const [pos, setPos] = useState('');
     const [heightFeet, setHeightFeet] = useState('6');
     const [heightInches, setHeightInches] = useState('0');
@@ -17,6 +18,7 @@ export default function EditPlayerModal({ isOpen, player, onClose, onSave }) {
     useEffect(() => {
         if (player) {
             setNickname(player.nickname || '');
+            setJersey(player.jersey !== undefined && player.jersey !== null ? String(player.jersey).replace('#', '') : '');
             setPos(player.pos || 'Guard');
             
             if (player.height) {
@@ -129,6 +131,7 @@ export default function EditPlayerModal({ isOpen, player, onClose, onSave }) {
         const updatedPlayer = {
             ...player,
             nickname,
+            jersey: jersey ? `#${jersey}` : '',
             pos,
             height: `${heightFeet}'${heightInches}"`,
             weight: weight ? `${weight} lbs` : '',
@@ -156,7 +159,7 @@ export default function EditPlayerModal({ isOpen, player, onClose, onSave }) {
                 </p>
 
                 <form onSubmit={handleSubmit}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
                         <div className="form-group">
                             <label>Nickname</label>
                             <input
@@ -164,6 +167,15 @@ export default function EditPlayerModal({ isOpen, player, onClose, onSave }) {
                                 placeholder='e.g. "MUDBONE"'
                                 value={nickname}
                                 onChange={(e) => setNickname(e.target.value)}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Jersey Number</label>
+                            <input
+                                type="number"
+                                placeholder="0"
+                                value={jersey}
+                                onChange={(e) => setJersey(e.target.value)}
                             />
                         </div>
                         <div className="form-group">

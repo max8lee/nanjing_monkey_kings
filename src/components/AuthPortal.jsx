@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { LogIn, UserPlus, ShieldCheck, X, ShieldAlert } from 'lucide-react';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { LogIn, UserPlus, ShieldCheck, X, ShieldAlert, Mail } from 'lucide-react';
 import { auth } from '../firebase';
 import { getUser, getAuthEmailByUsername, claimUsername } from '../firebaseDb';
 import { findMatchingRosterPlayer } from '../data/teamData';
@@ -20,6 +20,7 @@ export default function AuthPortal({ isOpen, claimedPlayers = {}, onLogin, onSig
     const [favoritePlayer, setFavoritePlayer] = useState('');
 
     const [verificationError, setVerificationError] = useState('');
+    const [resetSuccess, setResetSuccess] = useState('');
 
     if (!isOpen) return null;
 
@@ -27,6 +28,7 @@ export default function AuthPortal({ isOpen, claimedPlayers = {}, onLogin, onSig
     const handleLoginSubmit = async (e) => {
         e.preventDefault();
         setVerificationError('');
+        setResetSuccess('');
         try {
             let emailToUse = loginEmail.trim();
             if (!emailToUse.includes('@')) {
@@ -45,6 +47,32 @@ export default function AuthPortal({ isOpen, claimedPlayers = {}, onLogin, onSig
                 setVerificationError('❌ Incorrect email/username or password.');
             } else {
                 setVerificationError(`❌ Login error: ${err.message}`);
+            }
+        }
+    };
+
+    // ── Password Reset ────────────────────────────────────────────────────────
+    const handleResetPasswordSubmit = async (e) => {
+        e.preventDefault();
+        setVerificationError('');
+        setResetSuccess('');
+        try {
+            let emailToUse = loginEmail.trim();
+            if (!emailToUse.includes('@')) {
+                const foundEmail = await getAuthEmailByUsername(emailToUse);
+                if (foundEmail) {
+                    emailToUse = foundEmail;
+                } else {
+                    throw { code: 'auth/user-not-found' };
+                }
+            }
+            await sendPasswordResetEmail(auth, emailToUse);
+            setResetSuccess('✅ Password reset email sent! Please check your inbox.');
+        } catch (err) {
+            if (err.code === 'auth/user-not-found') {
+                setVerificationError('❌ Account not found.');
+            } else {
+                setVerificationError(`❌ Error: ${err.message}`);
             }
         }
     };
@@ -153,8 +181,8 @@ export default function AuthPortal({ isOpen, claimedPlayers = {}, onLogin, onSig
                 <div className="auth-tabs" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.25rem' }}>
                     <button
                         type="button"
-                        className={`auth-tab-btn ${authTab === 'login' ? 'active' : ''}`}
-                        onClick={() => { setAuthTab('login'); setVerificationError(''); }}
+                        className={`auth-tab-btn ${authTab === 'login' || authTab === 'reset' ? 'active' : ''}`}
+                        onClick={() => { setAuthTab('login'); setVerificationError(''); setResetSuccess(''); }}
                     >
                         <LogIn size={16} /> LOG IN
                     </button>
@@ -191,6 +219,24 @@ export default function AuthPortal({ isOpen, claimedPlayers = {}, onLogin, onSig
                         <span>{verificationError}</span>
                     </div>
                 )}
+                
+                {resetSuccess && (
+                    <div style={{
+                        background: 'rgba(52, 211, 153, 0.15)',
+                        border: '1px solid #34D399',
+                        color: '#34D399',
+                        padding: '0.8rem 1rem',
+                        borderRadius: '10px',
+                        fontSize: '0.82rem',
+                        marginTop: '1rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.6rem'
+                    }}>
+                        <Mail size={20} style={{ flexShrink: 0 }} />
+                        <span>{resetSuccess}</span>
+                    </div>
+                )}
 
                 {authTab === 'login' ? (
                     <form className="auth-form active" onSubmit={handleLoginSubmit}>
@@ -201,8 +247,30 @@ export default function AuthPortal({ isOpen, claimedPlayers = {}, onLogin, onSig
                         <div className="form-group">
                             <label>Password</label>
                             <input type="password" name="password" autoComplete="current-password" required placeholder="••••••••" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} />
+                            <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+                                <button type="button" onClick={() => { setAuthTab('reset'); setVerificationError(''); setResetSuccess(''); }} style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline' }}>
+                                    Forgot password?
+                                </button>
+                            </div>
                         </div>
                         <button type="submit" className="btn-auth-submit">SIGN IN TO TEAM SITE</button>
+                    </form>
+
+                ) : authTab === 'reset' ? (
+                    <form className="auth-form active" onSubmit={handleResetPasswordSubmit}>
+                        <div className="form-group">
+                            <label>Email / Username</label>
+                            <input type="text" name="username" autoComplete="username" required placeholder="max or max@monkeykings.com" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} />
+                            <p style={{ color: '#94A3B8', fontSize: '0.8rem', marginTop: '0.5rem' }}>
+                                Enter the email or username associated with your account and we will send you a link to reset your password.
+                            </p>
+                        </div>
+                        <button type="submit" className="btn-auth-submit">SEND RESET LINK</button>
+                        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                            <button type="button" onClick={() => { setAuthTab('login'); setVerificationError(''); setResetSuccess(''); }} style={{ background: 'none', border: 'none', color: '#94A3B8', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline' }}>
+                                Back to Log In
+                            </button>
+                        </div>
                     </form>
 
                 ) : authTab === 'signup' ? (
